@@ -40,6 +40,7 @@ public class MainEditor : EditorWindow
         sceneObj.AddComponent(typeof(SceneScript));
         sceneObj.AddComponent(typeof(Cache));
         sceneObj.AddComponent(typeof(GameStats));
+        sceneObj.AddComponent(typeof(ItemDatabase));
     }
 
     [MenuItem("Crab/Setup this Scene", true)]
