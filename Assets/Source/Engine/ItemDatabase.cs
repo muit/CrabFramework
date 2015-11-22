@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+[System.Serializable]
 public class ItemData {
     public string name;
     public Mesh mesh;
@@ -24,6 +25,7 @@ public class ItemDatabase : MonoBehaviour {
     }
 
 
+
     public List<ItemData> db = new List<ItemData>();
 
     public ItemData FindByName(string name) {
@@ -36,6 +38,8 @@ public class ItemDatabase : MonoBehaviour {
     }
 
     public List<string> GetNames() {
-        return db.Select(x => x.name).ToList();
+        List<string> names = new List<string>();
+        db.ForEach(x => names.Add(x.name));
+        return names;
     }
 }

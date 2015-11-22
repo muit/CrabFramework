@@ -17,6 +17,10 @@ public class Databases : EditorWindow
     private string[] itemNames;
     private int itemIndex = 0;
 
+    void OnProjectChange() {
+        UpdateItems();
+    }
+
     void OnGUI() {
         titleContent = new GUIContent("Crab Databases");
 
@@ -34,23 +38,27 @@ public class Databases : EditorWindow
         if (GUILayout.Button((showItems ? "↖ " : "↓ ") + "Items", EditorStyles.boldLabel))
         {
             showItems = !showItems;
+            UpdateItems();
         }
         if (showItems)
         {
             int newIndex = EditorGUILayout.Popup(itemIndex, itemNames);
-            if (newIndex != itemIndex) {
-                itemIndex = newIndex;
-
-                UpdateItems();
-
-                item = GetDB().FindById(itemIndex+1);
-                itemName = item.name;
-                itemMesh = item.mesh;
+            if (newIndex != itemIndex)
+            {
+                if (newIndex != 0)
+                {
+                    SelectItem(newIndex);
+                } else{
+                    item = null;
+                    itemName = "New Item";
+                    itemMesh = null;
+                }
             }
+            itemIndex = newIndex;
 
             EditorGUI.indentLevel++;
             itemName = EditorGUILayout.TextField(itemName);
-            itemMesh = EditorGUILayout.ObjectField(itemMesh ,typeof(Mesh)) as Mesh;
+            itemMesh = EditorGUILayout.ObjectField(itemMesh, typeof(Mesh)) as Mesh;
             /*
             if (GUILayout.Button((showItemsAdvanced ? "    ↖ " : "    ↓ ") + "Advanced", EditorStyles.label))
             {
@@ -69,14 +77,19 @@ public class Databases : EditorWindow
                 {
                     item = new ItemData();
                     GetDB().db.Add(item);
-                    UpdateItems();
-                    itemIndex = item.GetId();
+                    itemIndex = item.GetId()+1;
                 }
                 item.name = itemName;
                 item.mesh = itemMesh;
+
+                UpdateItems();
             }
-            if (!CreatingNewItem() && GUILayout.Button("Remove", EditorStyles.miniButton)) {
-                
+
+            if (!CreatingNewItem() && GUILayout.Button("Remove", EditorStyles.miniButton))
+            {
+                GetDB().db.Remove(item);
+                UpdateItems();
+                SelectItem(itemIndex-1);
             }
 
             EditorGUI.indentLevel--;
@@ -88,7 +101,13 @@ public class Databases : EditorWindow
         List<string> names = GetDB().GetNames();
         names.Insert(0, "* New Item");
         itemNames = names.ToArray();
+    }
 
+    private void SelectItem(int index) {
+        ItemData data = GetDB().FindById(index-1);
+        itemIndex = index;
+        itemName = data.name;
+        itemMesh = data.mesh;
     }
 
     private bool CreatingNewItem() {
