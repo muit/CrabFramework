@@ -11,7 +11,7 @@ public class Databases : EditorWindow
     private bool showItems = true;
     private bool showItemsAdvanced;
     private string itemName = "None";
-    private Mesh itemMesh;
+    private GameObject itemMesh;
     private ItemData item;
 
     private string[] itemNames;
@@ -63,7 +63,7 @@ public class Databases : EditorWindow
 
             EditorGUI.indentLevel++;
             itemName = EditorGUILayout.TextField(itemName);
-            itemMesh = EditorGUILayout.ObjectField(itemMesh, typeof(Mesh)) as Mesh;
+            itemMesh = EditorGUILayout.ObjectField(itemMesh, typeof(GameObject)) as GameObject;
             /*
             if (GUILayout.Button((showItemsAdvanced ? "    ↖ " : "    ↓ ") + "Advanced", EditorStyles.label))
             {

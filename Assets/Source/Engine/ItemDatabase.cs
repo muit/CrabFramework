@@ -5,7 +5,7 @@ using System.Linq;
 [System.Serializable]
 public class ItemData {
     public string name;
-    public Mesh mesh;
+    public GameObject mesh;
 
     public int GetId() {
         return ItemDatabase.Get.db.IndexOf(this);
