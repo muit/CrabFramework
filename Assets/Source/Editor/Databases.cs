@@ -87,6 +87,10 @@ public class Databases : EditorWindow
                 item.name = itemName;
                 item.mesh = itemMesh;
 
+                if (!CreatingNewItem()) {
+                    GetDB().db[itemIndex - 1] = item;
+                }
+
                 UpdateItems();
             }
 
@@ -109,10 +113,10 @@ public class Databases : EditorWindow
     }
 
     private void SelectItem(int index) {
-        ItemData data = GetDB().FindById(index-1);
+        item = GetDB().FindById(index-1);
         itemIndex = index;
-        itemName = data.name;
-        itemMesh = data.mesh;
+        itemName = item.name;
+        itemMesh = item.mesh;
     }
 
     private bool CreatingNewItem() {
