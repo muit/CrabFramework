@@ -8,7 +8,8 @@ using System.Collections;
 public class CState : MonoBehaviour {
     public enum CombatState
     {
-        Default,
+        Idle,
+        Alert,
         Combat
     }
 
@@ -17,7 +18,7 @@ public class CState : MonoBehaviour {
     {
         me = GetComponent<Entity>();
 
-        combat = CombatState.Default;
+        combat = CombatState.Idle;
     }
 
     public CombatState combat;
