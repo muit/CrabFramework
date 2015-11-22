@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
+using System.Collections.Generic;
 
 public class ToolMenu : EditorWindow {
     private GUIStyle foldOutStyle = new GUIStyle();
@@ -23,6 +23,18 @@ public class ToolMenu : EditorWindow {
     private string item_name = "Item";
     private Vector3 item_position;
 
+    private string[] itemTypes;
+    private int itemIndex = 0;
+
+    void OnFocus()
+    {
+        UpdateItems();
+    }
+    void OnHierarchyChange()
+    {
+        UpdateItems();
+    }
+
 
 
     [MenuItem("GameObject/Create Other/Crab Entity")]
@@ -38,6 +50,9 @@ public class ToolMenu : EditorWindow {
     }
 
     void OnGUI() {
+        if (itemTypes == null) UpdateItems();
+
+
         titleContent = new GUIContent("Crab Tools");
 
         foldOutStyle.fontStyle = FontStyle.Bold;
@@ -100,13 +115,16 @@ public class ToolMenu : EditorWindow {
         if (GUILayout.Button(showItem ? "↖ Item" : "↓ Item", EditorStyles.boldLabel))
         {
             showItem = !showItem;
+            if(showItem) UpdateItems();
         }
         if (showItem)
         {
             EditorGUI.indentLevel++;
 
-            item_name = EditorGUILayout.TextField(item_name);
+            itemIndex = EditorGUILayout.Popup(itemIndex, itemTypes);
             EditorGUILayout.Space();
+
+            item_name = EditorGUILayout.TextField(item_name);
 
             item_position = EditorGUILayout.Vector3Field("", item_position);
             
@@ -115,7 +133,7 @@ public class ToolMenu : EditorWindow {
         
         if (GUILayout.Button("Create Item", EditorStyles.miniButtonMid))
         {
-            if (string.IsNullOrEmpty(entity_name))
+            if (string.IsNullOrEmpty(item_name))
             {
                 Debug.LogWarning("Crab: A name is required to create a new Item");
                 return;
@@ -124,10 +142,20 @@ public class ToolMenu : EditorWindow {
             GameObject entityObj = new GameObject(item_name);
             entityObj.transform.position = item_position;
 
-            entityObj.AddComponent(typeof(Item));
+            Item item = entityObj.AddComponent(typeof(Item)) as Item;
+            item.attributes = GetDB().FindById(itemIndex);
         }
+    }
 
+    private void UpdateItems()
+    {
+        itemTypes = GetDB().GetNames().ToArray();
+    }
 
+    ItemDatabase itemDB;
+    private ItemDatabase GetDB()
+    {
+        return itemDB ? itemDB : itemDB = FindObjectOfType<ItemDatabase>();
     }
 }
 

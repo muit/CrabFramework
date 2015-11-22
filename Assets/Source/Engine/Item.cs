@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Item : MonoBehaviour {
 
+    public ItemData attributes;
+
     void Start()
     {
         OnGameStart(SceneScript.Instance);

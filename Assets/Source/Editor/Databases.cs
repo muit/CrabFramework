@@ -17,7 +17,12 @@ public class Databases : EditorWindow
     private string[] itemNames;
     private int itemIndex = 0;
 
-    void OnProjectChange() {
+    void OnFocus()
+    {
+        UpdateItems();
+    }
+    void OnHierarchyChange()
+    {
         UpdateItems();
     }
 
@@ -38,7 +43,7 @@ public class Databases : EditorWindow
         if (GUILayout.Button((showItems ? "↖ " : "↓ ") + "Items", EditorStyles.boldLabel))
         {
             showItems = !showItems;
-            UpdateItems();
+            if(showItems) UpdateItems();
         }
         if (showItems)
         {
