@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using Crab;
+using Crab.Components; 
 
 public class ToolMenu : EditorWindow {
     private GUIStyle foldOutStyle = new GUIStyle();

@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Crab;
 
-[RequireComponent(typeof(Entity))]
-[DisallowMultipleComponent]
-public class CInventory : MonoBehaviour {
-    private Entity me;
-    void Awake() {
-        me = GetComponent<Entity>();
+namespace Crab.Components
+{
+    [RequireComponent(typeof(Entity))]
+    [DisallowMultipleComponent]
+    public class CInventory : MonoBehaviour
+    {
+        private Entity me;
+        void Awake()
+        {
+            me = GetComponent<Entity>();
+        }
     }
 }

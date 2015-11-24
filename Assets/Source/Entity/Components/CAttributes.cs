@@ -1,15 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Crab;
 
-[RequireComponent(typeof(Entity))]
-[DisallowMultipleComponent]
-public class CAttributes : MonoBehaviour {
-    private Entity me;
-    void Awake()
+namespace Crab.Components
+{
+    [RequireComponent(typeof(Entity))]
+    [DisallowMultipleComponent]
+    public class CAttributes : MonoBehaviour
     {
-        me = GetComponent<Entity>();
-    }
+        private Entity me;
+        void Awake()
+        {
+            me = GetComponent<Entity>();
+        }
 
-    //Attributes
-    public System.UInt16 live = 100;
+        //Attributes
+        public System.UInt16 live = 100;
+    }
 }

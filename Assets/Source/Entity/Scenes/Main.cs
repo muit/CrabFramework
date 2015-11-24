@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Crab.Controllers;
+
 
 public class Main : SceneScript {
 

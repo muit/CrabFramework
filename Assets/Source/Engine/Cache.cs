@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Crab.Controllers;
 
 public class Cache : MonoBehaviour {
     [Header("Character Prefabs")]

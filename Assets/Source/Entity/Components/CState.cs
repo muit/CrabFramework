@@ -1,25 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
-
-[RequireComponent(typeof(Entity))]
-[DisallowMultipleComponent]
+using Crab;
 
 
-public class CState : MonoBehaviour {
-    public enum CombatState
+namespace Crab.Components
+{
+    [RequireComponent(typeof(Entity))]
+    [DisallowMultipleComponent]
+    public class CState : MonoBehaviour
     {
-        Idle,
-        Alert,
-        Combat
+        public enum CombatState
+        {
+            Idle,
+            Alert,
+            Combat
+        }
+
+        private Entity me;
+        void Awake()
+        {
+            me = GetComponent<Entity>();
+
+            combat = CombatState.Idle;
+        }
+
+        public CombatState combat;
     }
-
-    private Entity me;
-    void Awake()
-    {
-        me = GetComponent<Entity>();
-
-        combat = CombatState.Idle;
-    }
-
-    public CombatState combat;
 }

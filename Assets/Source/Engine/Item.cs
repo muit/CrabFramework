@@ -1,21 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Item : MonoBehaviour {
-
-    public ItemData attributes;
-
-    void Start()
+namespace Crab
+{
+    public class Item : MonoBehaviour
     {
-        OnGameStart(SceneScript.Instance);
-    }
 
-    public virtual void Reset()
-    {
-        if(!gameObject.activeSelf)
-            gameObject.SetActive(true);
-    }
+        public ItemData attributes;
 
-    //Events
-    protected virtual void OnGameStart(SceneScript scene) { }
+        void Start()
+        {
+            OnGameStart(SceneScript.Instance);
+        }
+
+        public virtual void Reset()
+        {
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+        }
+
+        //Events
+        protected virtual void OnGameStart(SceneScript scene) { }
+    }
 }

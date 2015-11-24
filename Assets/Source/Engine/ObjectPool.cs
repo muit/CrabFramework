@@ -1,34 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Crab;
 
-public class ObjectPool : List<Item> {
+namespace Crab.Utils
+{
+    public class ObjectPool : List<Item>
+    {
 
-    public readonly int size;
+        public readonly int size;
 
-    public ObjectPool(int size) : base() {
-        this.size = size;
-    }
-
-    public Item Create(Item prefab, Vector3 position) {
-        return Create(prefab, position, Quaternion.identity);
-    }
-
-    public Item Create(Item prefab, Vector3 position, Quaternion rotation) {
-        Item item;
-        if (Count < size)
+        public ObjectPool(int size)
+            : base()
         {
-            item = Item.Instantiate(prefab, position, rotation) as Item;
-            Add(item);
+            this.size = size;
         }
-        else
+
+        public Item Create(Item prefab, Vector3 position)
         {
-            item = this[0];
-            RemoveAt(0);
-            item.transform.position = position;
-            item.transform.rotation = rotation;
-            item.Reset();
-            Add(item);
+            return Create(prefab, position, Quaternion.identity);
         }
-        return item;
+
+        public Item Create(Item prefab, Vector3 position, Quaternion rotation)
+        {
+            Item item;
+            if (Count < size)
+            {
+                item = Item.Instantiate(prefab, position, rotation) as Item;
+                Add(item);
+            }
+            else
+            {
+                item = this[0];
+                RemoveAt(0);
+                item.transform.position = position;
+                item.transform.rotation = rotation;
+                item.Reset();
+                Add(item);
+            }
+            return item;
+        }
     }
 }

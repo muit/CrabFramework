@@ -1,145 +1,155 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Crab;
+using Crab.Utils;
 
-[RequireComponent(typeof(Entity))]
-[RequireComponent(typeof(CharacterController))]
-[DisallowMultipleComponent]
-
-
-public class CMovement : MonoBehaviour
+namespace Crab.Components
 {
-    private Entity me;
-    private CharacterController characterController;
-    private Animator animator;
-    private EntityFloor floor;
-
-    //Pathfinding
-    private NavMeshAgent agent;
-    private float reachDistance = 100;
-    private Transform agentTarget;
-
-    void Awake()
+    [RequireComponent(typeof(Entity))]
+    [RequireComponent(typeof(CharacterController))]
+    [DisallowMultipleComponent]
+    public class CMovement : MonoBehaviour
     {
-        me = GetComponent<Entity>();
-        floor = GetComponentInChildren<EntityFloor>();
-        characterController = GetComponent<CharacterController>();
-        animator = GetComponentInChildren<Animator>();
+        private Entity me;
+        private CharacterController characterController;
+        private Animator animator;
+        private EntityFloor floor;
 
-        agent = GetComponent<NavMeshAgent>();
-    }
+        //Pathfinding
+        public float reachDistance = 100;
+        private NavMeshAgent agent;
+        private Transform agentTarget;
 
-
-    public void Move(Vector3 direction)
-    {
-        animator.SetFloat("Speed", direction.z);
-        animator.SetFloat("Direction", direction.x);
-    }
-
-    public void AIMove(Vector3 position, float reachDistance = 1) {
-        if (!agent) return;
-        agentTarget = null;
-        agent.SetDestination(position);
-    }
-
-    public void AIMove(Transform trans, float reachDistance = 1) {
-        if (!agent) return;
-        agentTarget = trans;
-    }
-
-    void Update() {
-        if (agent)
+        void Awake()
         {
-            if (agent.remainingDistance < reachDistance)
+            me = GetComponent<Entity>();
+            floor = GetComponentInChildren<EntityFloor>();
+            characterController = GetComponent<CharacterController>();
+            animator = GetComponentInChildren<Animator>();
+
+            agent = GetComponent<NavMeshAgent>();
+        }
+
+
+        public void Move(Vector3 direction)
+        {
+            animator.SetFloat("Speed", direction.z);
+            animator.SetFloat("Direction", direction.x);
+        }
+
+        public void AIMove(Vector3 position, float reachDistance = 1)
+        {
+            if (!agent) return;
+            agentTarget = null;
+            agent.SetDestination(position);
+        }
+
+        public void AIMove(Transform trans, float reachDistance = 1)
+        {
+            if (!agent) return;
+            agentTarget = trans;
+        }
+
+        void Update()
+        {
+            if (agent)
             {
-                agent.Stop();
+                if (agent.remainingDistance < reachDistance)
+                {
+                    agent.Stop();
+                }
+                else if (agentTarget)
+                {
+                    agent.SetDestination(agentTarget.position);
+                }
             }
-            else if (agentTarget)
+        }
+
+        /**
+         * Crouch
+         */
+        private bool crouching;
+        public bool canCrouch = true;
+
+        public void StartCrouching()
+        {
+            if (canCrouch)
             {
-                agent.SetDestination(agentTarget.position);
+                crouching = true;
+                animator.SetBool("Crouch", true);
             }
         }
-    }
-
-    /**
-     * Crouch
-     */
-    private bool crouching;
-    public bool canCrouch = true;
-
-    public void StartCrouching()
-    {
-        if (canCrouch)
+        public void StopCrouching()
         {
-            crouching = true;
-            animator.SetBool("Crouch", true);
+            crouching = false;
+            animator.SetBool("Crouch", false);
         }
-    }
-    public void StopCrouching()
-    {
-        crouching = false;
-        animator.SetBool("Crouch", false);
-    }
 
-    public bool isCrouching {
-        get {
-            return crouching;
-        }
-    }
-
-
-    /**
-     * Sprint
-     */
-    private float sprinting;
-    public bool canSprint = true;
-
-    public void StartSprint()
-    {
-        if (canSprint)
+        public bool isCrouching
         {
-            sprinting = 1f;
+            get
+            {
+                return crouching;
+            }
+        }
+
+
+        /**
+         * Sprint
+         */
+        private float sprinting;
+        public bool canSprint = true;
+
+        public void StartSprint()
+        {
+            if (canSprint)
+            {
+                sprinting = 1f;
+                animator.SetFloat("Sprint", sprinting);
+            }
+        }
+
+        public void StopSprint()
+        {
+            sprinting = 0f;
             animator.SetFloat("Sprint", sprinting);
         }
-    }
 
-    public void StopSprint()
-    {
-        sprinting = 0f;
-        animator.SetFloat("Sprint", sprinting);
-    }
-
-    public bool isSprinting {
-        get
+        public bool isSprinting
         {
-            return sprinting > 0;
+            get
+            {
+                return sprinting > 0;
+            }
         }
-    }
 
-    /**
-     * Physics
-     */
-    private bool falling;
+        /**
+         * Physics
+         */
+        private bool falling;
 
-    public void StartFalling()
-    {
-        if (!falling)
+        public void StartFalling()
         {
-            animator.SetTrigger("StartFalling");
+            if (!falling)
+            {
+                animator.SetTrigger("StartFalling");
+            }
+            falling = true;
+            animator.SetBool("Falling", falling);
         }
-        falling = true;
-        animator.SetBool("Falling", falling);
-    }
 
-    public void StopFalling()
-    {
-        falling = false;
-        animator.SetBool("Falling", falling);
-    }
-
-    public bool isFalling {
-        get
+        public void StopFalling()
         {
-            return falling;
+            falling = false;
+            animator.SetBool("Falling", falling);
+        }
+
+        public bool isFalling
+        {
+            get
+            {
+                return falling;
+            }
         }
     }
 }
