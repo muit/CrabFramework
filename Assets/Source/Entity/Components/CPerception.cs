@@ -55,17 +55,15 @@ namespace Crab.Components
 		    // Create a vector from the enemy to the player and store the angle between it and forward.
 		    Vector3 direction = other.transform.position - transform.position;
 		    float angle = Vector3.Angle(direction, transform.forward);
-		
 		    // If the angle between forward and where the player is, is less than half the angle of view...
-		    if(angle < fieldOfViewAngle * 0.5f)
+		    if(angle < fieldOfViewAngle*0.5f)
             {
 			    RaycastHit hit;
 			
 			    // ... and if a raycast towards the player hits something...
 			    if(Physics.Raycast(transform.position, direction.normalized, out hit, collider.radius))
                 {
-
-				    if(hit.collider.GetComponent<Entity>() == target) {
+                    if (hit.collider.GetComponentInParent<Entity>() == target) {
                         if (visibleTargets.Add(target)) {
                             onEntityDetected.Invoke(target);
                         }
