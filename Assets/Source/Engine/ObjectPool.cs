@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using Crab;
 
 namespace Crab.Utils
 {
@@ -9,8 +8,7 @@ namespace Crab.Utils
 
         public readonly int size;
 
-        public ObjectPool(int size)
-            : base()
+        public ObjectPool(int size) : base()
         {
             this.size = size;
         }

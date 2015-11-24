@@ -15,6 +15,8 @@ namespace Crab.Components
         }
 
         //Attributes
-        public System.UInt16 live = 100;
+        public bool inmortal = false;
+        public int live = 100;
+        public Faction faction = Faction.NO_FACTION;
     }
 }

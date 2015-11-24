@@ -14,7 +14,7 @@ namespace Crab.Controllers
         void Awake()
         {
             me = GetComponent<Entity>();
-            movement = me.GetMovement();
+            movement = me.Movement;
         }
 
         void Update()

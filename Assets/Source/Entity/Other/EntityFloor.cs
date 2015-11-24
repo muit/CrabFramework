@@ -17,7 +17,7 @@ namespace Crab.Utils
         void Start()
         {
             me = GetComponentInParent<Entity>();
-            movement = me.GetMovement();
+            movement = me.Movement;
         }
 
         List<Transform> insideObjects = new List<Transform>();
