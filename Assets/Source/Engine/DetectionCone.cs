@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-
+﻿
 namespace Crab.Debug
 {
+    using UnityEngine;
+
     public class DetectionCone
     {
         int quality = 15;
@@ -30,6 +30,7 @@ namespace Crab.Debug
         // Draw called once per frame
         public void Draw(Vector3 position, Color color, float angle_lookat, float angle_fov = 110, float dist_max = 5.0f, float dist_min = 1.0f)
         {
+            Debug.Log(angle_lookat);
             float angle_start = angle_lookat - angle_fov/2;
             float angle_end = angle_lookat + angle_fov/2;
             float angle_delta = (angle_end - angle_start) / quality;
