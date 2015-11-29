@@ -52,6 +52,14 @@ public class ToolMenu : EditorWindow {
     }
 
     void OnGUI() {
+        if (!MainEditor.IsSetup()) {
+            GUILayout.Space(30);
+            if (GUILayout.Button("Setup the Scene")) {
+                MainEditor.Setup();
+            }
+            return;
+        }
+
         if (itemTypes == null) UpdateItems();
 
 
@@ -158,7 +166,8 @@ public class ToolMenu : EditorWindow {
 
     private void UpdateItems()
     {
-        itemTypes = GetDB().GetNames().ToArray();
+        if (MainEditor.IsSetup())
+            itemTypes = GetDB().GetNames().ToArray();
     }
 
     ItemDatabase itemDB;
