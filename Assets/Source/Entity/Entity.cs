@@ -10,13 +10,37 @@ namespace Crab
 
         void Awake() {
             controller = GetComponent<EntityController>();
+            AI = (AIController)controller;
+        }
+
+        //Public Methods
+        void Damage(int damage, Entity damageCauser, DamageType damageType) {
+            Attributes.Live -= damage;
+
+            if (!Attributes.IsAlive())
+            {
+                controller.SendMessage("JustDead", damageCauser);
+                damageCauser.Controller.SendMessage("JustKilled", this);
+            }
+            else
+            {
+                controller.AnyDamage(damage, damageCauser, damageType);
+
+                if (IsAI() && !AI.IsInCombatWith(damageCauser))
+                {
+                    AI.StartCombatWith(damageCauser);
+                }
+            }
         }
 
 
+        //Components
         private EntityController controller;
         public EntityController Controller {
             get { return controller; }
         }
+        public AIController AI;
+        public bool IsAI() { return AI; }
 
         private CMovement movement;
         public CMovement Movement {

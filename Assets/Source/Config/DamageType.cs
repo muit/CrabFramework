@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-enum DamageType {
+public enum DamageType {
     DEFAULT
 }

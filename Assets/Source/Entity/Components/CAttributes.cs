@@ -16,7 +16,17 @@ namespace Crab.Components
 
         //Attributes
         public bool inmortal = false;
-        public int live = 100;
+        [SerializeField]
+        private int live = 100;
         public Faction faction = Faction.NO_FACTION;
+
+
+
+        public int Live {
+            set { live = value > 0 ? value : 0; }
+            get { return live; }
+        }
+
+        public bool IsAlive() { return live > 0; }
     }
 }

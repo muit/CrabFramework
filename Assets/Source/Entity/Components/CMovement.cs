@@ -1,12 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
-using Crab;
-using Crab.Utils;
-
+﻿
 namespace Crab.Components
 {
+    using UnityEngine;
+    using Utils;
+
     [RequireComponent(typeof(Entity))]
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(NavMeshAgent))]
+
     [DisallowMultipleComponent]
     public class CMovement : MonoBehaviour
     {
@@ -16,7 +17,7 @@ namespace Crab.Components
         private EntityFloor floor;
 
         //Pathfinding
-        public float reachDistance = 100;
+        public float reachDistance = 1;
         private NavMeshAgent agent;
         private Transform agentTarget;
 
@@ -28,6 +29,9 @@ namespace Crab.Components
             animator = GetComponentInChildren<Animator>();
 
             agent = GetComponent<NavMeshAgent>();
+            if (agent) {
+                agent.stoppingDistance = reachDistance;
+            }
         }
 
 
@@ -42,27 +46,39 @@ namespace Crab.Components
             if (!agent) return;
             agentTarget = null;
             agent.SetDestination(position);
+            agent.Resume();
         }
 
         public void AIMove(Transform trans, float reachDistance = 1)
         {
             if (!agent) return;
             agentTarget = trans;
+            agent.SetDestination(trans.position);
+            agent.Resume();
+        }
+
+        public void CancelMovement() {
+            if (agent)
+            {
+                agent.Stop();
+                agentTarget = null;
+            }
         }
 
         void Update()
         {
-            if (agent)
+            if (agent && agentTarget)
             {
-                if (agent.remainingDistance < reachDistance)
+                agent.destination = agentTarget.position;
+                if (agent.remainingDistance >= reachDistance)
                 {
-                    agent.Stop();
-                }
-                else if (agentTarget)
-                {
-                    agent.SetDestination(agentTarget.position);
+                    agent.Resume();
                 }
             }
+        }
+
+        private bool TargetIsUpdated() {
+            return agent.destination == agentTarget.position;
         }
 
         /**

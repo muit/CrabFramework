@@ -36,11 +36,19 @@ namespace Crab.Components
 
 		    // Setting up the references.
 		    collider = GetComponent<SphereCollider>();
-		    collider.isTrigger = true;
-		    collider.radius = viewDistance / transform.localScale.y;
 
             if (detectionCone == null) detectionCone = new DetectionCone();
 	    }
+        private float lastDistance = 0;
+        void Update() {
+            if (viewDistance != lastDistance) {
+                lastDistance = viewDistance;
+
+                collider.isTrigger = true;
+                collider.radius = viewDistance / transform.localScale.y;
+            }
+        }
+
 	
 	    void OnTriggerStay (Collider other)
 	    {
@@ -65,7 +73,12 @@ namespace Crab.Components
                 {
                     if (hit.collider.GetComponentInParent<Entity>() == target) {
                         if (visibleTargets.Add(target)) {
-                            onEntityDetected.Invoke(target);
+                            if (me.IsAI())
+                            {
+                                me.AI.StartCombatWith(target);
+                            }
+                            //Error: Failed to convert parameters
+                            //onEntityDetected.Invoke(target);
                         }
                     }
 			    }
@@ -81,15 +94,21 @@ namespace Crab.Components
 
             nearTargets.Remove (target);
 
-            if (visibleTargets.Remove(target)) {
-                onEntityDetected.Invoke(target);
+            if (visibleTargets.Remove(target))
+            {
+                if(me.IsAI())
+                {
+                    me.AI.StopCombatWith(target);
+                }
+                //Error: Failed to convert parameters
+                //onEntityDetected.Invoke(target);
             }
         }
 
         void OnDrawGizmos ()
         {
             if(detectionCone != null) 
-                detectionCone.Draw(transform.position, Color.blue, transform.rotation.y, fieldOfViewAngle, viewDistance);
+                detectionCone.Draw(transform.position, Color.blue, transform.rotation.eulerAngles.y, fieldOfViewAngle, viewDistance);
         
             Color gizmosColor = Gizmos.color;
             Gizmos.color = Color.red;
