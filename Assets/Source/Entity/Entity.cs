@@ -1,16 +1,38 @@
-﻿using UnityEngine;
-using Crab.Components;
-using Crab.Controllers;
+﻿
+namespace Crab {
+    using UnityEngine;
+    using System;
+    using Crab.Components;
+    using Crab.Controllers;
 
-namespace Crab
-{
     public class Entity : MonoBehaviour
     {
         public bool controlledByFaction = false;
 
-        void Awake() {
+        void Awake()
+        {
             controller = GetComponent<EntityController>();
-            AI = (AIController)controller;
+
+            //Generate Controller
+            if (controlledByFaction)
+            {
+                string faction = Enum.GetName(typeof(Faction), Attributes.faction);
+                UnityEngine.Debug.Log("Loading Faction controller \"" + faction + "Controller\"");
+                try
+                {
+                    Type type = Type.GetType(faction+"Controller");
+                    controller = gameObject.AddComponent(type) as FactionController;
+                }
+                catch (Exception) {
+                    UnityEngine.Debug.LogError("Couldn't load \"" + faction + "Controller\"");
+                }
+                //Attributes.faction;
+            }
+            if (!controller) {
+                controller = gameObject.AddComponent<EntityController>();
+            }
+
+            AI = controller as AIController;
         }
 
         //Public Methods
@@ -39,6 +61,7 @@ namespace Crab
         public EntityController Controller {
             get { return controller; }
         }
+        [System.NonSerialized]
         public AIController AI;
         public bool IsAI() { return AI; }
 
