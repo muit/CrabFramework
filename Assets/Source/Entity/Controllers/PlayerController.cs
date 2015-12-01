@@ -9,11 +9,9 @@ namespace Crab.Controllers
     [RequireComponent(typeof(CMovement))]
     public class PlayerController : EntityController
     {
-        private Entity me;
         private CMovement movement;
         void Awake()
         {
-            me = GetComponent<Entity>();
             movement = me.Movement;
         }
 
