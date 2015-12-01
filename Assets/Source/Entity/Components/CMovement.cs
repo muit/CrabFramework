@@ -16,7 +16,10 @@ namespace Crab.Components
         private Animator animator;
         private EntityFloor floor;
 
+        public float speed = 3.5f;
+
         //Pathfinding
+        [Header("Pathfinding")]
         public float reachDistance = 1;
         private NavMeshAgent agent;
         private Transform agentTarget;
@@ -31,14 +34,16 @@ namespace Crab.Components
             agent = GetComponent<NavMeshAgent>();
             if (agent) {
                 agent.stoppingDistance = reachDistance;
+                agent.speed = speed;
             }
         }
 
 
         public void Move(Vector3 direction)
         {
-            animator.SetFloat("Speed", direction.z);
-            animator.SetFloat("Direction", direction.x);
+            characterController.Move(direction * speed * Time.deltaTime);
+            //animator.SetFloat("Speed", direction.z);
+            //animator.SetFloat("Direction", direction.x);
         }
 
         public void AIMove(Vector3 position, float reachDistance = 1)
