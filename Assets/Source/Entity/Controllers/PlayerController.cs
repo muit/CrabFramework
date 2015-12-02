@@ -12,6 +12,7 @@ namespace Crab.Controllers
         private CMovement movement;
         void Awake()
         {
+            me = GetComponent<Entity>();
             movement = me.Movement;
         }
 
