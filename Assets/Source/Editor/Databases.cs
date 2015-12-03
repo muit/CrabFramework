@@ -17,6 +17,11 @@ public class Databases : EditorWindow
     private string[] itemNames;
     private int itemIndex = 0;
 
+    void OnEnabled()
+    {
+        UpdateItems();
+    }
+
     void OnFocus()
     {
         UpdateItems();
