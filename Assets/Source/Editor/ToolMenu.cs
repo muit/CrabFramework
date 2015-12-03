@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using Crab.Components;
+using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 using Crab;
-using Crab.Components; 
 
-public class ToolMenu : EditorWindow {
+public class ToolMenu : EditorWindow
+{
     private GUIStyle foldOutStyle = new GUIStyle();
 
     private bool showEntity = true;
@@ -28,17 +28,14 @@ public class ToolMenu : EditorWindow {
     private string[] itemTypes;
     private int itemIndex = 0;
 
-    void OnEnabled()
-    {
+    void OnEnabled() {
         UpdateItems();
     }
 
-    void OnFocus()
-    {
+    void OnFocus() {
         UpdateItems();
     }
-    void OnHierarchyChange()
-    {
+    void OnHierarchyChange() {
         UpdateItems();
     }
 
@@ -72,12 +69,10 @@ public class ToolMenu : EditorWindow {
 
         foldOutStyle.fontStyle = FontStyle.Bold;
 
-        if (GUILayout.Button(showEntity ? "↖ Entity" : "↓ Entity", EditorStyles.boldLabel))
-        {
+        if (GUILayout.Button(showEntity ? "↖ Entity" : "↓ Entity", EditorStyles.boldLabel)) {
             showEntity = !showEntity;
         }
-        if (showEntity)
-        {
+        if (showEntity) {
             EditorGUI.indentLevel++;
 
             entity_name = EditorGUILayout.TextField(entity_name);
@@ -87,8 +82,7 @@ public class ToolMenu : EditorWindow {
 
 
             showEntityComponents = EditorGUILayout.Foldout(showEntityComponents, "Components");
-            if (showEntityComponents)
-            {
+            if (showEntityComponents) {
                 EditorGUI.indentLevel++;
                 cAttributes = EditorGUILayout.Toggle("Attributes", cAttributes);
                 cInventory = EditorGUILayout.Toggle("Inventory", cInventory);
@@ -101,10 +95,8 @@ public class ToolMenu : EditorWindow {
             EditorGUI.indentLevel--;
         }
 
-        if (GUILayout.Button("Create Entity", EditorStyles.miniButtonMid))
-        {
-            if (string.IsNullOrEmpty(entity_name))
-            {
+        if (GUILayout.Button("Create Entity", EditorStyles.miniButtonMid)) {
+            if (string.IsNullOrEmpty(entity_name)) {
                 Debug.LogWarning("Crab: A name is required to create a new Entity");
                 return;
             }
@@ -127,13 +119,11 @@ public class ToolMenu : EditorWindow {
 
 
 
-        if (GUILayout.Button(showItem ? "↖ Item" : "↓ Item", EditorStyles.boldLabel))
-        {
+        if (GUILayout.Button(showItem ? "↖ Item" : "↓ Item", EditorStyles.boldLabel)) {
             showItem = !showItem;
-            if(showItem) UpdateItems();
+            if (showItem) UpdateItems();
         }
-        if (showItem)
-        {
+        if (showItem) {
             EditorGUI.indentLevel++;
 
             itemIndex = EditorGUILayout.Popup(itemIndex, itemTypes);
@@ -142,14 +132,12 @@ public class ToolMenu : EditorWindow {
             item_name = EditorGUILayout.TextField(item_name);
 
             item_position = EditorGUILayout.Vector3Field("", item_position);
-            
+
             EditorGUI.indentLevel--;
         }
-        
-        if (GUILayout.Button("Create Item", EditorStyles.miniButtonMid))
-        {
-            if (string.IsNullOrEmpty(item_name))
-            {
+
+        if (GUILayout.Button("Create Item", EditorStyles.miniButtonMid)) {
+            if (string.IsNullOrEmpty(item_name)) {
                 Debug.LogWarning("Crab: A name is required to create a new Item");
                 return;
             }
@@ -160,7 +148,7 @@ public class ToolMenu : EditorWindow {
             Item item = entityObj.AddComponent(typeof(Item)) as Item;
             item.attributes = GetDB().FindById(itemIndex);
 
-            if(item.attributes.mesh) {
+            if (item.attributes.mesh) {
                 GameObject meshObj = GameObject.Instantiate(item.attributes.mesh, item_position, Quaternion.identity) as GameObject;
                 meshObj.transform.parent = entityObj.transform;
                 meshObj.name = "mesh";
@@ -169,16 +157,13 @@ public class ToolMenu : EditorWindow {
         }
     }
 
-    private void UpdateItems()
-    {
+    private void UpdateItems() {
         if (MainEditor.IsSetup())
             itemTypes = GetDB().GetNames().ToArray();
     }
 
     ItemDatabase itemDB;
-    private ItemDatabase GetDB()
-    {
+    private ItemDatabase GetDB() {
         return itemDB ? itemDB : itemDB = FindObjectOfType<ItemDatabase>();
     }
 }
-

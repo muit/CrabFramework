@@ -6,7 +6,7 @@ public class Databases : EditorWindow
 {
     //Factions
     private bool showFactions = true;
-    
+
     //Items
     private bool showItems = true;
     private bool showItemsAdvanced;
@@ -17,48 +17,39 @@ public class Databases : EditorWindow
     private string[] itemNames;
     private int itemIndex = 0;
 
-    void OnEnabled()
-    {
+    void OnEnabled() {
         UpdateItems();
     }
 
-    void OnFocus()
-    {
+    void OnFocus() {
         UpdateItems();
     }
-    void OnHierarchyChange()
-    {
+    void OnHierarchyChange() {
         UpdateItems();
     }
 
     void OnGUI() {
         titleContent = new GUIContent("Crab Databases");
 
-        if (GUILayout.Button((showFactions ? "↖ " : "↓ ") + "Factions", EditorStyles.boldLabel))
-        {
+        if (GUILayout.Button((showFactions ? "↖ " : "↓ ") + "Factions", EditorStyles.boldLabel)) {
             showFactions = !showFactions;
         }
-        if (showFactions)
-        {
-            
+        if (showFactions) {
+
         }
 
 
 
-        if (GUILayout.Button((showItems ? "↖ " : "↓ ") + "Items", EditorStyles.boldLabel))
-        {
+        if (GUILayout.Button((showItems ? "↖ " : "↓ ") + "Items", EditorStyles.boldLabel)) {
             showItems = !showItems;
-            if(showItems) UpdateItems();
+            if (showItems) UpdateItems();
         }
-        if (showItems)
-        {
+        if (showItems) {
             int newIndex = EditorGUILayout.Popup(itemIndex, itemNames);
-            if (newIndex != itemIndex)
-            {
-                if (newIndex != 0)
-                {
+            if (newIndex != itemIndex) {
+                if (newIndex != 0) {
                     SelectItem(newIndex);
-                } else{
+                } else {
                     item = null;
                     itemName = "New Item";
                     itemMesh = null;
@@ -81,10 +72,8 @@ public class Databases : EditorWindow
                 EditorGUI.indentLevel--;
             }*/
 
-            if (GUILayout.Button(CreatingNewItem()? "Create": "Save", EditorStyles.miniButton))
-            {
-                if (CreatingNewItem())
-                {
+            if (GUILayout.Button(CreatingNewItem() ? "Create" : "Save", EditorStyles.miniButton)) {
+                if (CreatingNewItem()) {
                     item = new ItemData();
                     GetDB().db.Add(item);
                     itemIndex = item.GetId()+1;
@@ -99,8 +88,7 @@ public class Databases : EditorWindow
                 UpdateItems();
             }
 
-            if (!CreatingNewItem() && GUILayout.Button("Remove", EditorStyles.miniButton))
-            {
+            if (!CreatingNewItem() && GUILayout.Button("Remove", EditorStyles.miniButton)) {
                 GetDB().db.Remove(item);
                 UpdateItems();
                 SelectItem(itemIndex-1);
@@ -110,8 +98,7 @@ public class Databases : EditorWindow
         }
     }
 
-    private void UpdateItems()
-    {
+    private void UpdateItems() {
         List<string> names = GetDB().GetNames();
         names.Insert(0, "* New Item");
         itemNames = names.ToArray();

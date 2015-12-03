@@ -3,14 +3,15 @@
 namespace Crab.Events
 {
     using UnityEngine;
-    using System.Collections.Generic;
+    using CrabEditor;
 
     public class Trigger : MonoBehaviour
     {
         [System.NonSerialized]
         public Collider tCollider;
 
-        public Crab.Event firedEvent;
+        public Crab.Event eventFired;
+        public Crab.Event eventFinished;
         public Vector3 size;
         public LayerMask affectedLayers;
 
@@ -20,13 +21,22 @@ namespace Crab.Events
             tCollider.isTrigger = true;
             tCollider.enabled = true;
         }
+
         void OnTriggerEnter(Collider col) {
-            if ((affectedLayers.value & 1 << col.gameObject.layer) == 1 << col.gameObject.layer) {
-                Debug.Log("....");
-                firedEvent.SendMessage("StartEvent");
+            if (IsInLayerMask(col.gameObject, affectedLayers)) {
+                eventFired.SendMessage("StartEvent");
+                eventFinished.SendMessage("FinishEvent");
             }
         }
+
+        private bool IsInLayerMask(GameObject obj, LayerMask layerMask) {
+            if ((layerMask.value & (1 << obj.layer)) > 0)
+                return true;
+            else
+                return false;
+        }
     }
+    
 
     [CustomEditor(typeof(Trigger))]
     public class TriggerEditor : Editor
@@ -63,13 +73,16 @@ namespace Crab.Events
             serializedObject.Update();
 
             EditorGUILayout.LabelField("Affected Layers");
-            t.affectedLayers = EditorGUILayout.LayerField(t.affectedLayers);
+            t.affectedLayers = Util.LayerMaskField(t.affectedLayers);
 
             EditorGUILayout.LabelField("Size");
             t.size = EditorGUILayout.Vector3Field("", t.size);
 
-            EditorGUILayout.LabelField("Fired Event", EditorStyles.largeLabel);
-            t.firedEvent = EditorGUILayout.ObjectField("", t.firedEvent, typeof(Crab.Event)) as Crab.Event;
+            EditorGUILayout.LabelField("Fires Event", EditorStyles.largeLabel);
+            t.eventFired = EditorGUILayout.ObjectField("", t.eventFired, typeof(Crab.Event)) as Crab.Event;
+
+            EditorGUILayout.LabelField("Finishes Event", EditorStyles.largeLabel);
+            t.eventFinished  = EditorGUILayout.ObjectField("", t.eventFinished, typeof(Crab.Event)) as Crab.Event;
 
             EditorGUILayout.Space();
             EditorGUILayout.Space();
