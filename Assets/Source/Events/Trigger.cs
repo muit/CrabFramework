@@ -24,8 +24,10 @@ namespace Crab.Events
 
         void OnTriggerEnter(Collider col) {
             if (IsInLayerMask(col.gameObject, affectedLayers)) {
-                eventFired.SendMessage("StartEvent");
-                eventFinished.SendMessage("FinishEvent");
+                if(eventFired)
+                    eventFired.SendMessage("StartEvent");
+                if(eventFinished)
+                    eventFinished.SendMessage("FinishEvent");
             }
         }
 
@@ -49,12 +51,8 @@ namespace Crab.Events
 
             //Find Collider or Create it
             t.tCollider = t.GetComponent<Collider>();
-            if (!t.tCollider)
-            {
-                t.tCollider = t.gameObject.AddComponent<BoxCollider>();
-            }
-            t.tCollider.isTrigger = true;
             UpdateCollider();
+            t.tCollider.isTrigger = true;
         }
 
         public override void OnInspectorGUI()
@@ -93,6 +91,11 @@ namespace Crab.Events
 
         protected virtual void UpdateCollider()
         {
+            if (!t.tCollider)
+            {
+                t.tCollider = t.gameObject.AddComponent<BoxCollider>();
+            }
+
             BoxCollider collider = t.tCollider as BoxCollider;
             if (collider) {
                 collider.size = t.size;

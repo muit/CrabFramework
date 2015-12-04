@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Crab.Controllers;
-using Crab.Items;
+using Crab.Events;
 
 public class SceneScript : MonoBehaviour
 {
@@ -20,7 +20,7 @@ public class SceneScript : MonoBehaviour
     }
 
     [System.NonSerialized]
-    public ISpawn spawn;
+    public ESpawn spawn;
     [System.NonSerialized]
     public PlayerController player;
     [System.NonSerialized]
@@ -28,7 +28,7 @@ public class SceneScript : MonoBehaviour
 
     void Start()
     {
-        spawn = FindObjectOfType<ISpawn>();
+        spawn = FindObjectOfType<ESpawn>();
         BeforeGameStart();
 
         if (!player)

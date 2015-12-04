@@ -8,7 +8,7 @@ public class Main : SceneScript {
 
     protected override void BeforeGameStart()
     {
-        player = spawn.Spawn();
+        //player = spawn.StartEvent();
     }
 
     protected override void OnGameStart(PlayerController player) {}
