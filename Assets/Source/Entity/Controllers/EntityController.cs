@@ -8,8 +8,8 @@ using Crab;
 [System.Serializable]
 public class EntityController : MonoBehaviour{
     protected Entity me;
-
-    void Awake() {
+    
+    void Start() {
         me = GetComponent<Entity>();
         SendMessage("JustSpawned");
     }
@@ -21,5 +21,5 @@ public class EntityController : MonoBehaviour{
     void Update() {}
     void JustDead(Entity killer) {}
     void JustKilled(Entity victim) {}
-    public virtual void AnyDamage(int damage, Entity damageCauser, DamageType damageType) { }
+    protected virtual void AnyDamage(int damage, Entity damageCauser, DamageType damageType) { }
 }

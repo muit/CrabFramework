@@ -16,17 +16,7 @@ namespace Crab {
             //Generate Controller
             if (controlledByFaction)
             {
-                string faction = Enum.GetName(typeof(Faction), Attributes.faction);
-                UnityEngine.Debug.Log("Loading Faction controller \"" + faction + "Controller\"");
-                try
-                {
-                    Type type = Type.GetType(faction+"Controller");
-                    controller = gameObject.AddComponent(type) as FactionController;
-                }
-                catch (Exception) {
-                    UnityEngine.Debug.LogError("Couldn't load \"" + faction + "Controller\"");
-                }
-                //Attributes.faction;
+                controller = FactionDatabase.AddController(this, Attributes.faction);
             }
             if (!controller) {
                 controller = gameObject.AddComponent<EntityController>();
@@ -46,7 +36,7 @@ namespace Crab {
             }
             else
             {
-                controller.AnyDamage(damage, damageCauser, damageType);
+                //controller.AnyDamage(damage, damageCauser, damageType);
 
                 if (IsAI() && !AI.IsInCombatWith(damageCauser))
                 {
@@ -91,6 +81,14 @@ namespace Crab {
             get {
                 return inventory? inventory : inventory = GetComponent<CInventory>();
             }
+        }
+
+        public bool IsEnemyOf(Entity entity) {
+            if (!Attributes || !entity.Attributes) return true;
+            if (Attributes.faction != entity.Attributes.faction) return true;
+            if (Attributes.faction == FactionDatabase.NO_FACTION && 
+                entity.Attributes.faction == FactionDatabase.NO_FACTION) return true;
+            return false;
         }
     }
 }

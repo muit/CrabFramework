@@ -1,22 +1,23 @@
 ﻿
-namespace Crab.Components
-{
+namespace Crab.Components {
     using UnityEngine;
     using Utils;
 
     [RequireComponent(typeof(Entity))]
-    [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(NavMeshAgent))]
 
     [DisallowMultipleComponent]
-    public class CMovement : MonoBehaviour
-    {
+    public class CMovement : MonoBehaviour {
         private Entity me;
-        private CharacterController characterController;
+        new private Rigidbody rigidbody;
         private Animator animator;
         private EntityFloor floor;
+        [System.NonSerialized]
+        public Vector3 cachedDirection;
 
         public float speed = 3.5f;
+        public float accelerationForce = 200;
+        public float rotateSpeed = 15;
 
         //Pathfinding
         [Header("Pathfinding")]
@@ -24,39 +25,43 @@ namespace Crab.Components
         private NavMeshAgent agent;
         private Transform agentTarget;
 
-        void Awake()
-        {
+        void Awake() {
             me = GetComponent<Entity>();
             floor = GetComponentInChildren<EntityFloor>();
-            characterController = GetComponent<CharacterController>();
+            rigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInChildren<Animator>();
 
             agent = GetComponent<NavMeshAgent>();
-            if (agent) {
+            if (agent)
+            {
                 agent.stoppingDistance = reachDistance;
                 agent.speed = speed;
+                agent.acceleration = accelerationForce;
             }
         }
 
 
-        public void Move(Vector3 direction)
-        {
-            characterController.Move(direction * speed * Time.deltaTime);
-            //animator.SetFloat("Speed", direction.z);
-            //animator.SetFloat("Direction", direction.x);
+        public void Move(float h, float v) {
+            rigidbody.AddRelativeForce(new Vector3(h, 0, v) * accelerationForce);
+
+            Rotate();
         }
 
-        public void AIMove(Vector3 position, float reachDistance = 1)
-        {
-            if (!agent) return;
+        public void Rotate() {
+            rigidbody.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(cachedDirection), rotateSpeed * Time.deltaTime);
+        }
+
+        public void AIMove(Vector3 position, float reachDistance = 1) {
+            if (!agent)
+                return;
             agentTarget = null;
             agent.SetDestination(position);
             agent.Resume();
         }
 
-        public void AIMove(Transform trans, float reachDistance = 1)
-        {
-            if (!agent) return;
+        public void AIMove(Transform trans, float reachDistance = 1) {
+            if (!agent)
+                return;
             agentTarget = trans;
             agent.SetDestination(trans.position);
             agent.Resume();
@@ -70,8 +75,7 @@ namespace Crab.Components
             }
         }
 
-        void Update()
-        {
+        void Update() {
             if (agent && agentTarget)
             {
                 agent.destination = agentTarget.position;
@@ -79,6 +83,18 @@ namespace Crab.Components
                 {
                     agent.Resume();
                 }
+            }
+            else if (rigidbody)
+            {
+                Vector3 velocity = rigidbody.velocity;
+                float ySpeed = velocity.y;
+                velocity.y = 0;
+
+                if (velocity.magnitude > speed)
+                    velocity = velocity.normalized * speed;
+
+                velocity.y = ySpeed;
+                rigidbody.velocity = velocity;
             }
         }
 
@@ -92,24 +108,20 @@ namespace Crab.Components
         private bool crouching;
         public bool canCrouch = true;
 
-        public void StartCrouching()
-        {
+        public void StartCrouching() {
             if (canCrouch)
             {
                 crouching = true;
                 animator.SetBool("Crouch", true);
             }
         }
-        public void StopCrouching()
-        {
+        public void StopCrouching() {
             crouching = false;
             animator.SetBool("Crouch", false);
         }
 
-        public bool isCrouching
-        {
-            get
-            {
+        public bool isCrouching {
+            get {
                 return crouching;
             }
         }
@@ -121,8 +133,7 @@ namespace Crab.Components
         private float sprinting;
         public bool canSprint = true;
 
-        public void StartSprint()
-        {
+        public void StartSprint() {
             if (canSprint)
             {
                 sprinting = 1f;
@@ -130,16 +141,13 @@ namespace Crab.Components
             }
         }
 
-        public void StopSprint()
-        {
+        public void StopSprint() {
             sprinting = 0f;
             animator.SetFloat("Sprint", sprinting);
         }
 
-        public bool isSprinting
-        {
-            get
-            {
+        public bool isSprinting {
+            get {
                 return sprinting > 0;
             }
         }
@@ -149,8 +157,7 @@ namespace Crab.Components
          */
         private bool falling;
 
-        public void StartFalling()
-        {
+        public void StartFalling() {
             if (!falling)
             {
                 animator.SetTrigger("StartFalling");
@@ -159,16 +166,13 @@ namespace Crab.Components
             animator.SetBool("Falling", falling);
         }
 
-        public void StopFalling()
-        {
+        public void StopFalling() {
             falling = false;
             animator.SetBool("Falling", falling);
         }
 
-        public bool isFalling
-        {
-            get
-            {
+        public bool isFalling {
+            get {
                 return falling;
             }
         }

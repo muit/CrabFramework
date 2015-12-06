@@ -24,7 +24,7 @@ public class SceneScript : MonoBehaviour
     [System.NonSerialized]
     public PlayerController player;
     [System.NonSerialized]
-    public CameraMovement camera;
+    new public CameraMovement camera;
 
     void Start()
     {

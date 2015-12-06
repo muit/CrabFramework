@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using Crab;
 
@@ -18,7 +19,7 @@ namespace Crab.Components
         public bool inmortal = false;
         [SerializeField]
         private int live = 100;
-        public Faction faction = Faction.NO_FACTION;
+        public string faction;
 
 
 
@@ -28,5 +29,25 @@ namespace Crab.Components
         }
 
         public bool IsAlive() { return live > 0; }
+    }
+}
+
+[CustomEditor(typeof(Crab.Components.CAttributes))]
+public class CAttributesEditor : Editor {
+    Crab.Components.CAttributes t;
+    SerializedProperty faction;
+
+    void Awake() {
+        t = target as Crab.Components.CAttributes;
+
+        faction = serializedObject.FindProperty("faction");
+    }
+
+    public override void OnInspectorGUI() {
+        serializedObject.Update();
+        DrawPropertiesExcluding(serializedObject, "faction");
+        FactionDBEditor.FactionField(faction);
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

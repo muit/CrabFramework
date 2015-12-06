@@ -21,7 +21,7 @@ namespace Crab.Controllers
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
 
-            movement.Move(new Vector3(h, 0, v));
+            movement.Move(h, v);
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {

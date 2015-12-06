@@ -32,13 +32,16 @@ namespace Crab.Controllers
             movement.AIMove(enemy.transform.position);
         }
         
-        public override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) {
+        protected override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) {
         }
 
 
         //Public Methods
         private HashSet<Entity> targets = new HashSet<Entity>();
         public void StartCombatWith(Entity entity) {
+            if (!me.IsEnemyOf(entity) || IsInCombat())
+                return;
+
             targets.Add(entity);
             SendMessage("EnterCombat", entity);
         }
