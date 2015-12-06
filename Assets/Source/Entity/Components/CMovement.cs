@@ -8,16 +8,18 @@ namespace Crab.Components {
 
     [DisallowMultipleComponent]
     public class CMovement : MonoBehaviour {
-        private Entity me;
-        new private Rigidbody rigidbody;
-        private Animator animator;
-        private EntityFloor floor;
-        [System.NonSerialized]
-        public Vector3 cachedDirection;
-
         public float speed = 3.5f;
         public float accelerationForce = 200;
         public float rotateSpeed = 15;
+
+        private Entity me;
+        private Animator animator;
+        private EntityFloor floor;
+        [System.NonSerialized]
+        public Quaternion viewRotation;
+        [System.NonSerialized]
+        public bool moving = false;
+
 
         //Pathfinding
         [Header("Pathfinding")]
@@ -28,7 +30,6 @@ namespace Crab.Components {
         void Awake() {
             me = GetComponent<Entity>();
             floor = GetComponentInChildren<EntityFloor>();
-            rigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInChildren<Animator>();
 
             agent = GetComponent<NavMeshAgent>();
@@ -42,13 +43,11 @@ namespace Crab.Components {
 
 
         public void Move(float h, float v) {
-            rigidbody.AddRelativeForce(new Vector3(h, 0, v) * accelerationForce);
-
-            Rotate();
-        }
-
-        public void Rotate() {
-            rigidbody.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(cachedDirection), rotateSpeed * Time.deltaTime);
+            if (Mathf.Abs(h) > 0.1f && Mathf.Abs(v) > 0.1f)
+            {
+                agent.Move(transform.forward - (new Vector3(h, 0, v) * speed * Time.deltaTime));
+                moving = true;
+            }
         }
 
         public void AIMove(Vector3 position, float reachDistance = 1) {
@@ -76,26 +75,22 @@ namespace Crab.Components {
         }
 
         void Update() {
-            if (agent && agentTarget)
-            {
-                agent.destination = agentTarget.position;
-                if (agent.remainingDistance >= reachDistance)
+            if (agent) {
+                if (agentTarget)
                 {
-                    agent.Resume();
+                    agent.destination = agentTarget.position;
+                    if (agent.remainingDistance >= reachDistance)
+                    {
+                        agent.Resume();
+                    }
+                }
+                else if(moving && Quaternion.Angle(viewRotation, transform.rotation) > 2)//IsMoving
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, viewRotation, rotateSpeed);
                 }
             }
-            else if (rigidbody)
-            {
-                Vector3 velocity = rigidbody.velocity;
-                float ySpeed = velocity.y;
-                velocity.y = 0;
 
-                if (velocity.magnitude > speed)
-                    velocity = velocity.normalized * speed;
-
-                velocity.y = ySpeed;
-                rigidbody.velocity = velocity;
-            }
+            moving = false;
         }
 
         private bool TargetIsUpdated() {

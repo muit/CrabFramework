@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using Crab.Components;
-using System.Collections;
+﻿using Crab.Components;
+using UnityEngine;
 
 namespace Crab {
+    
     public class ControlledCamera : MonoBehaviour {
         public Transform target;
 
@@ -49,6 +49,7 @@ namespace Crab {
             {
                 x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
                 y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+                targetMovement.viewRotation = Quaternion.Euler(0,x,0);
                 
                 // otherwise, ease behind the target if any of the directional keys are pressed
             }
