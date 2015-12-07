@@ -9,6 +9,7 @@ namespace Crab.Components {
     [DisallowMultipleComponent]
     public class CMovement : MonoBehaviour {
         public float speed = 3.5f;
+        public float sideSpeed = 3f;
         public float accelerationForce = 200;
         public float rotateSpeed = 15;
 
@@ -16,7 +17,8 @@ namespace Crab.Components {
         private Animator animator;
         private EntityFloor floor;
         [System.NonSerialized]
-        public Quaternion viewRotation;
+        public Vector3 viewDirection;
+        private Vector3 moveVector;
         [System.NonSerialized]
         public bool moving = false;
 
@@ -43,10 +45,10 @@ namespace Crab.Components {
 
 
         public void Move(float h, float v) {
-            if (Mathf.Abs(h) > 0.1f && Mathf.Abs(v) > 0.1f)
+            if (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f)
             {
-                agent.Move(transform.forward - (new Vector3(h, 0, v) * speed * Time.deltaTime));
                 moving = true;
+                moveVector = new Vector3(h * sideSpeed, 0, v*speed);
             }
         }
 
@@ -84,9 +86,14 @@ namespace Crab.Components {
                         agent.Resume();
                     }
                 }
-                else if(moving && Quaternion.Angle(viewRotation, transform.rotation) > 2)//IsMoving
+                else if(moving)//IsMoving
                 {
-                    transform.rotation = Quaternion.Lerp(transform.rotation, viewRotation, rotateSpeed);
+                    agent.Move(transform.TransformDirection(moveVector) * Time.deltaTime);
+
+                    if (viewDirection != Vector3.zero)
+                    {
+                        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(viewDirection), rotateSpeed * Time.deltaTime);
+                    }
                 }
             }
 

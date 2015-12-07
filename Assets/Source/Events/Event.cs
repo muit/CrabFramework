@@ -7,7 +7,11 @@
 
     public class Event : MonoBehaviour
     {
-        protected bool started;
+        protected bool started = false;
+        protected bool enabled = true;
+
+
+        public bool disableWhenDone = false;
 
         public UnityEvent startEvent;
         public UnityEvent finishEvent;
@@ -24,8 +28,16 @@
         }
         
         public void StartEvent() {
+            if (!enabled)
+                return;
+
             started = true;
             JustStarted();
+
+            if (disableWhenDone)
+            {
+                enabled = false;
+            }
         }
 
         public void FinishEvent()

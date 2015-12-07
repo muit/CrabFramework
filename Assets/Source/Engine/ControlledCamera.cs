@@ -40,16 +40,27 @@ namespace Crab {
             targetMovement = target.GetComponent<CMovement>();
         }
 
-        void LateUpdate() {
+        void Update() {
             if (!target)
                 return;
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
 
             // If either mouse buttons are down, let them govern camera position
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
                 x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
                 y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
-                targetMovement.viewRotation = Quaternion.Euler(0,x,0);
+
+
+                Vector3 direction = transform.forward;
+                direction.y = 0;
+                targetMovement.viewDirection = direction.normalized;
+
+
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 
                 // otherwise, ease behind the target if any of the directional keys are pressed
             }

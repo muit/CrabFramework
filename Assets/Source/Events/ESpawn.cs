@@ -7,7 +7,6 @@ namespace Crab.Events
     public class ESpawn : Event
     {
         public EntityController prefab;
-        public bool disableWhenDone = false;
 
         protected override void OnGameStart(SceneScript scene)
         {
@@ -17,9 +16,6 @@ namespace Crab.Events
         protected override void JustStarted()
         {
             Spawn();
-            if (disableWhenDone) {
-                FinishEvent();
-            }
         }
 
         protected EntityController Spawn(float height = 0)
