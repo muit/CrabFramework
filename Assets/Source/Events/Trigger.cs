@@ -38,10 +38,7 @@ namespace Crab.Events
         }
 
         private bool IsInLayerMask(GameObject obj, LayerMask layerMask) {
-            if ((layerMask.value & (1 << obj.layer)) > 0)
-                return true;
-            else
-                return false;
+            return (layerMask.value & (1 << obj.layer)) > 0;
         }
 
 

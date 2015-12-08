@@ -16,11 +16,11 @@ namespace Crab.Components {
         private Entity me;
         private Animator animator;
         private EntityFloor floor;
+        //Camera
         [System.NonSerialized]
         public Vector3 viewDirection;
+        
         private Vector3 moveVector;
-        [System.NonSerialized]
-        public bool moving = false;
 
 
         //Pathfinding
@@ -28,11 +28,14 @@ namespace Crab.Components {
         public float reachDistance = 1;
         private NavMeshAgent agent;
         private Transform agentTarget;
+        private CharacterController characterController;
 
         void Awake() {
             me = GetComponent<Entity>();
             floor = GetComponentInChildren<EntityFloor>();
             animator = GetComponentInChildren<Animator>();
+
+            characterController = GetComponent<CharacterController>();
 
             agent = GetComponent<NavMeshAgent>();
             if (agent)
@@ -47,8 +50,11 @@ namespace Crab.Components {
         public void Move(float h, float v) {
             if (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f)
             {
-                moving = true;
                 moveVector = new Vector3(h * sideSpeed, 0, v*speed);
+            }
+            else
+            {
+                moveVector = Vector3.zero;
             }
         }
 
@@ -77,7 +83,8 @@ namespace Crab.Components {
         }
 
         void Update() {
-            if (agent) {
+            if (agent)
+            {
                 if (agentTarget)
                 {
                     agent.destination = agentTarget.position;
@@ -86,18 +93,28 @@ namespace Crab.Components {
                         agent.Resume();
                     }
                 }
-                else if(moving)//IsMoving
+            }
+            if (IsMoving())//IsMoving
+            {
+                if (characterController)
+                {
+                    characterController.Move(transform.TransformDirection(moveVector) * Time.deltaTime);
+                }
+                else if (agent)
                 {
                     agent.Move(transform.TransformDirection(moveVector) * Time.deltaTime);
+                }
 
-                    if (viewDirection != Vector3.zero)
-                    {
-                        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(viewDirection), rotateSpeed * Time.deltaTime);
-                    }
+                //Rotate
+                if (viewDirection != Vector3.zero)
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(viewDirection), rotateSpeed * Time.deltaTime);
                 }
             }
+        }
 
-            moving = false;
+        public bool IsMoving() {
+            return moveVector != Vector3.zero;
         }
 
         private bool TargetIsUpdated() {
