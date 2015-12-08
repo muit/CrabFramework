@@ -59,7 +59,6 @@ namespace Crab {
                 //Set Movement Direction
                 Vector3 direction = transform.forward;
                 direction.y = 0;
-                targetMovement.canRotate = false;
                 targetMovement.viewDirection = direction.normalized;
 
 
@@ -111,14 +110,22 @@ namespace Crab {
             corners[2] = camera.ViewportToWorldPoint(new Vector3(0, 0, camera.nearClipPlane)) - transform.position;
             corners[3] = camera.ViewportToWorldPoint(new Vector3(1, 0, camera.nearClipPlane)) - transform.position;
 
+            float HitDistance = distance;
+
             foreach (Vector3 corner in corners)
             {
                 if (Physics.Linecast(targetPos + corner, transform.position + corner, out hit, collidesWith))
                 {
-                    return hit.distance;
+                    //Find the closer collision
+                    if(hit.distance < HitDistance)
+                        HitDistance = hit.distance;
                 }
             }
-            return distance + smoothCollisionRate*Time.deltaTime;
+
+            if (HitDistance != distance)
+                return HitDistance;
+            else
+                return distance + smoothCollisionRate*Time.deltaTime;
         }
     }
 }

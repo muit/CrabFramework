@@ -69,6 +69,7 @@ namespace Crab.Components {
         public void AIMove(Transform trans, float reachDistance = 1) {
             if (!agent)
                 return;
+             
             agentTarget = trans;
             agent.SetDestination(trans.position);
             agent.Resume();
