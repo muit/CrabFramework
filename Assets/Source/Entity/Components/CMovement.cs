@@ -95,11 +95,13 @@ namespace Crab.Components {
                     }
                 }
             }
-            if (IsMoving())//IsMoving
+            
+            //IsMoving
+            if (IsMoving())
             {
                 if (characterController)
                 {
-                    characterController.Move(transform.TransformDirection(moveVector) * Time.deltaTime);
+                    characterController.Move((transform.TransformDirection(moveVector) + Physics.gravity) * Time.deltaTime);
                 }
                 else if (agent)
                 {

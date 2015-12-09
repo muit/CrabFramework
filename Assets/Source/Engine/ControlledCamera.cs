@@ -29,7 +29,8 @@ namespace Crab {
 
         private float x = 0.0f;
         private float y = 0.0f;
-        private float distance = 5.0f;
+        private float expectedDistance = 5.0f;
+        private float realDistance = 5.0f;
 
         private CMovement targetMovement;
         new private Camera camera;
@@ -80,16 +81,22 @@ namespace Crab {
             }
 
 
+            y = ClampAngle(y, yMinLimit, yMaxLimit);
+            transform.rotation = Quaternion.Euler(y, x, 0);
+
+
             zoom -= (Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime) * zoomRate * Mathf.Abs(zoom);
             zoom = Mathf.Clamp(zoom, minDistance, maxDistance);
 
-            distance = Mathf.Lerp(distance, GetRayCastDistance(distance), smoothCollisionRate/2*Time.deltaTime);
-            distance = Mathf.Clamp(distance, 0.0f, zoom);
+            expectedDistance = GetRayCastDistance(expectedDistance);
+            expectedDistance = Mathf.Clamp(expectedDistance, 0.0f, zoom);
 
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
+            if (realDistance < expectedDistance)
+                realDistance = Mathf.Lerp(realDistance, expectedDistance, smoothCollisionRate * Time.deltaTime);
+            else
+                realDistance = expectedDistance;
 
-            transform.rotation = Quaternion.Euler(y, x, 0);
-            transform.position = target.position - (transform.rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
+            transform.position = target.position - (transform.rotation * Vector3.forward * (realDistance) + new Vector3(0, -targetHeight, 0));
         }
 
         static float ClampAngle(float angle, float min, float max) {
@@ -110,22 +117,42 @@ namespace Crab {
             corners[2] = camera.ViewportToWorldPoint(new Vector3(0, 0, camera.nearClipPlane)) - transform.position;
             corners[3] = camera.ViewportToWorldPoint(new Vector3(1, 0, camera.nearClipPlane)) - transform.position;
 
-            float HitDistance = distance;
+            float HitDistance = zoom;
 
             foreach (Vector3 corner in corners)
             {
+                //UnityEngine.Debug.DrawRay(targetPos + corner, transform.position - targetPos);
                 if (Physics.Linecast(targetPos + corner, transform.position + corner, out hit, collidesWith))
                 {
                     //Find the closer collision
-                    if(hit.distance < HitDistance)
+                    if (hit.distance < HitDistance)
                         HitDistance = hit.distance;
                 }
             }
 
-            if (HitDistance != distance)
+            if (HitDistance != zoom)
                 return HitDistance;
+            else if (collisionCount > 0)
+                return distance;
             else
-                return distance + smoothCollisionRate*Time.deltaTime;
+                return zoom;
+        }
+
+
+        int collisionCount = 0;
+
+        void OnTriggerEnter(Collider col) {
+            if(IsInLayerMask(col.gameObject, collidesWith))
+                collisionCount++;
+        }
+
+        void OnTriggerExit(Collider col) {
+            if (IsInLayerMask(col.gameObject, collidesWith))
+                collisionCount = collisionCount > 0 ? collisionCount - 1 : 0;
+        }
+
+        public static bool IsInLayerMask(GameObject obj, LayerMask mask) {
+            return ((mask.value & (1 << obj.layer)) > 0);
         }
     }
 }

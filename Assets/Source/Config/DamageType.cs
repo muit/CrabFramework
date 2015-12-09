@@ -3,4 +3,5 @@ using System.Collections;
 
 public enum DamageType {
     DEFAULT
+    
 }
