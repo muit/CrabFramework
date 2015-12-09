@@ -10,7 +10,16 @@ namespace Crab.Controllers
     [DisallowMultipleComponent]
     public class AIController : EntityController
     {
+        enum Events {
+            BASIC_ATTACK
+        }
+
+
         private CMovement movement;
+
+        void Update() {
+            events.Update();
+        }
 
         void JustSpawned()
         {
@@ -20,11 +29,15 @@ namespace Crab.Controllers
         void EnterCombat(Entity enemy)
         {
             movement.AIMove(enemy.transform);
+
+            events.RegistryEvent((int)Events.BASIC_ATTACK, Random.Range(3000, 6000));
         }
 
         void FinishCombat(Entity enemy)
         {
             movement.CancelMovement();
+
+            events.CancelEvent((int)Events.BASIC_ATTACK);
         }
 
         void EnemyLost(Entity enemy)
@@ -33,6 +46,16 @@ namespace Crab.Controllers
         }
         
         protected override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) {
+        }
+
+        void OnEvent(int id)
+        {
+            switch ((Events)id)
+            {
+                case Events.BASIC_ATTACK:
+                    Debug.Log("Pum");
+                    break;
+            }
         }
 
 
@@ -61,6 +84,5 @@ namespace Crab.Controllers
         public bool IsInCombatWith(Entity entity) {
             return targets.Contains(entity);
         }
-
     }
 }

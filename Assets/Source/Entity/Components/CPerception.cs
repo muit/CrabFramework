@@ -88,7 +88,7 @@ namespace Crab.Components
 	
 		void OnTriggerExit (Collider other)
 		{
-			Entity target = other.GetComponent<Entity> ();
+			Entity target = other.GetComponent<Entity>();
 			if (!target)
 				return;
 

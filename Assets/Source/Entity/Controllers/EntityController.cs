@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Crab;
+using Crab.Utils;
 
 [RequireComponent(typeof(Entity))]
 [DisallowMultipleComponent]
@@ -8,9 +9,11 @@ using Crab;
 [System.Serializable]
 public class EntityController : MonoBehaviour{
     protected Entity me;
+    protected EventsMap events;
     
     void Start() {
         me = GetComponent<Entity>();
+        events = new EventsMap(this);
         SendMessage("JustSpawned");
     }
 
