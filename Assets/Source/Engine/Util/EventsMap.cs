@@ -31,15 +31,12 @@ namespace Crab.Utils
 
         public void Update()
         {
-            foreach (KeyValuePair<int, Delay> ev in events)
+            List<KeyValuePair<int, Delay>> doneEvents = events.Where(ev => { return ev.Value.Over(); }).ToList();
+            foreach (KeyValuePair<int, Delay> ev in doneEvents)
             {
-                if (ev.Value.Over())
-                {
-                    dad.SendMessage("OnEvent", ev.Key);
-                    ev.Value.Reset();
-                }
+                ev.Value.Reset();
+                dad.SendMessage("OnEvent", ev.Key);
             }
-
         }
     }
 }

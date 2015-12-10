@@ -11,7 +11,7 @@ namespace Crab.Controllers
     public class AIController : EntityController
     {
         enum Events {
-            BASIC_ATTACK
+            BASIC_ATTACK = 20122
         }
 
 
@@ -54,6 +54,7 @@ namespace Crab.Controllers
             {
                 case Events.BASIC_ATTACK:
                     Debug.Log("Pum");
+                    events.RestartEvent((int)Events.BASIC_ATTACK, Random.Range(3000, 6000));
                     break;
             }
         }
