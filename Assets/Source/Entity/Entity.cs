@@ -45,15 +45,23 @@ namespace Crab {
             }
         }
 
+        public bool IsPlayer() {
+            return controller as PlayerController;
+        }
 
-        //Components
         private EntityController controller;
         public EntityController Controller {
             get { return controller; }
         }
         [System.NonSerialized]
         public AIController AI;
-        public bool IsAI() { return AI; }
+        public bool IsAI() {
+            return AI? AI : AI = controller as AIController;
+        }
+
+
+
+        //Components
 
         private CMovement movement;
         public CMovement Movement {

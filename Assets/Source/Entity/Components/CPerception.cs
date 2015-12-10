@@ -118,7 +118,7 @@ namespace Crab.Components
 			Gizmos.color = gizmosColor;
 		}
 	}
-
+    
 	struct LastSight {
 		Vector3 position;
 		Quaternion rotation;
