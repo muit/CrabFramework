@@ -15,3 +15,8 @@ namespace Crab.Components
         }
     }
 }
+
+public struct ItemStack
+{
+
+}

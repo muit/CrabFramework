@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,5 +42,41 @@ public class ItemDatabase : MonoBehaviour {
         List<string> names = new List<string>();
         db.ForEach(x => names.Add(x.name));
         return names;
+    }
+}
+
+[System.Serializable]
+public class ItemType {
+    public ItemType(int index) {
+        id = index;
+    }
+
+    public int id;
+    
+    public ItemData GetData() {
+        return ItemDatabase.Get.FindById(id);
+    }
+}
+
+[CustomPropertyDrawer(typeof(ItemType))]
+public class ItemTypeDrawer : PropertyDrawer
+{
+    private string[] names;
+    private SerializedProperty id;
+
+    // Draw the property inside the given rect
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        if (names == null)
+            names = ItemDatabase.Get.GetNames().ToArray();
+        if (id == null)
+            id = property.FindPropertyRelative("id");
+
+
+        EditorGUI.BeginProperty(position, label, property);
+
+        id.intValue = EditorGUI.Popup(new Rect(position.x, position.y, position.width, position.height), id.intValue, names);
+        
+        EditorGUI.EndProperty();
     }
 }

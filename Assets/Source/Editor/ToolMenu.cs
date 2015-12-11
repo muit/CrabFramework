@@ -146,13 +146,13 @@ public class ToolMenu : EditorWindow
             entityObj.transform.position = item_position;
 
             Item item = entityObj.AddComponent(typeof(Item)) as Item;
-            item.attributes = GetDB().FindById(itemIndex);
-
+            item.type = new ItemType(itemIndex);
+            /*
             if (item.attributes.mesh) {
                 GameObject meshObj = GameObject.Instantiate(item.attributes.mesh, item_position, Quaternion.identity) as GameObject;
                 meshObj.transform.parent = entityObj.transform;
                 meshObj.name = "mesh";
-            }
+            }*/
 
         }
     }
