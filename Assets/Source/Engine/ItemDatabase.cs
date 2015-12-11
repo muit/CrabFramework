@@ -56,6 +56,17 @@ public class ItemType {
     public ItemData GetData() {
         return ItemDatabase.Get.FindById(id);
     }
+
+
+    public static bool operator ==(ItemType i1, ItemType i2)
+    {
+        return i1 != null && i2 != null && i1.id == i2.id;
+    }
+
+    public static bool operator !=(ItemType i1, ItemType i2)
+    {
+        return !(i1 == i2);
+    }
 }
 
 [CustomPropertyDrawer(typeof(ItemType))]
