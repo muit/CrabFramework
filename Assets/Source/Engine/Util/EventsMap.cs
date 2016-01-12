@@ -36,6 +36,7 @@ namespace Crab.Utils
             {
                 ev.Value.Reset();
                 dad.SendMessage("OnEvent", ev.Key);
+                CancelEvent(ev.Key);
             }
         }
     }

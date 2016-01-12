@@ -18,28 +18,7 @@ namespace Crab.Controllers
 
         void Update()
         {
-            float h = Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical");
-
-            movement.Move(h, v);
-
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                movement.StartSprint();
-            }
-            else if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                movement.StopSprint();
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                movement.StartCrouching();
-            }
-            else if (Input.GetKeyUp(KeyCode.LeftControl))
-            {
-                movement.StopCrouching();
-            }
+            movement.Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         }
     }
 }

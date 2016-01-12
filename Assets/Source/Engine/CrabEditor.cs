@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -37,3 +38,4 @@ namespace CrabEditor
         }
     }
 }
+#endif

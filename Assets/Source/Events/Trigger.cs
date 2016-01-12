@@ -1,12 +1,14 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEditorInternal;
+using CrabEditor;
+#endif
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Crab.Events
 {
     using UnityEngine;
-    using CrabEditor;
 
     public class Trigger : MonoBehaviour
     {
@@ -59,8 +61,9 @@ namespace Crab.Events
             Gizmos.color = gizmosColor;
         }
     }
-    
 
+
+    #if UNITY_EDITOR
     [CustomEditor(typeof(Trigger))]
     public class TriggerEditor : Editor
     {
@@ -158,4 +161,5 @@ namespace Crab.Events
             }
         }
     }
+    #endif
 }

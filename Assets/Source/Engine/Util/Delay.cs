@@ -27,8 +27,13 @@ namespace Crab.Utils
             return Time.time * 1000 >= endTime;
         }
 
-        public void Start()
+        public void Start(int newLength = -1)
         {
+            if (newLength != -1) {
+                length = newLength;
+            }
+
+
             started = true;
             endTime = length + Time.time * 1000;
         }

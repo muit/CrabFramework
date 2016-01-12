@@ -1,9 +1,10 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Crab.Events
 {
     using UnityEngine;
-    using CrabEditor;
 
     public class SphereTrigger : Trigger
     {
@@ -11,6 +12,7 @@ namespace Crab.Events
     }
 
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(SphereTrigger))]
     public class SphereTriggerEditor : TriggerEditor
     {
@@ -38,4 +40,5 @@ namespace Crab.Events
             }
         }
     }
+#endif
 }

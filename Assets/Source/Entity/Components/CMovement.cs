@@ -4,7 +4,6 @@ namespace Crab.Components {
     using Utils;
 
     [RequireComponent(typeof(Entity))]
-    [RequireComponent(typeof(NavMeshAgent))]
 
     [DisallowMultipleComponent]
     public class CMovement : MonoBehaviour {

@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System;
 using Crab;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Crab
 {
@@ -38,6 +40,7 @@ namespace Crab
 }
 
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(Crab.FactionDatabase))]
 public class FactionDBEditor : Editor {
     public override void OnInspectorGUI() {
@@ -58,3 +61,4 @@ public class FactionDBEditor : Editor {
         return db.factions[index];
     }
 }
+#endif

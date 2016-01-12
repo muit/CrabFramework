@@ -28,7 +28,7 @@
         }
         
         public void StartEvent() {
-            if (!enabled)
+            if (!enabled || started)
                 return;
 
             started = true;
@@ -42,10 +42,15 @@
 
         public void FinishEvent()
         {
+            if (!started) return;
+            
             started = false;
             JustFinished();
         }
 
+        public bool IsStarted() {
+            return started;
+        }
 
         //Events
         protected virtual void OnGameStart(SceneScript scene) { }

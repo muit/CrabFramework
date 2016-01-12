@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine.Events;
-using Crab;
 using Crab.Debug;
 
 namespace Crab.Components
@@ -118,7 +116,7 @@ namespace Crab.Components
 			Gizmos.color = gizmosColor;
 		}
 	}
-    
+	
 	struct LastSight {
 		Vector3 position;
 		Quaternion rotation;

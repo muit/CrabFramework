@@ -1,30 +1,29 @@
 ﻿using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Crab
 {
     [RequireComponent(typeof(SphereCollider))]
     public class Item : MonoBehaviour
     {
-        public ItemType type;
+        public ItemData attributes;
 
+        public bool moveWhenDisappear = false;
 
         public bool autoPickUp = false;
         public float pickUpDistance = 5;
-        public bool moveWhenDisappear = false;
         public bool playersCanPick = true;
         public bool entitiesCanPick = false;
 
         public float radius = 0.3f;
-
         
-        private Entity disappearingTarget;
-        private Rigidbody rigidbody;
 
         void Start()
         {
             OnGameStart(SceneScript.Instance);
-            rigidbody = GetComponent<Rigidbody>();
             UpdateCollider();
         }
 
@@ -49,21 +48,6 @@ namespace Crab
                 gameObject.SetActive(true);
         }
 
-        void Update()
-        {
-            if (disappearingTarget)
-            {
-                Vector3 direction = (disappearingTarget.transform.position - transform.position).normalized;
-                rigidbody.AddForce(direction * 800 * Time.deltaTime);
-                
-                if (Vector3.Distance(disappearingTarget.transform.position, transform.position) <= radius)
-                {
-                    SendMessage("PickUp", disappearingTarget);
-                    GameObject.Destroy(gameObject);
-                }
-            }
-        }
-
         //Events
         protected virtual void OnGameStart(SceneScript scene) { }
 
@@ -74,27 +58,16 @@ namespace Crab
 
         void OnTriggerEnter(Collider col)
         {
+            if (!autoPickUp)
+                return;
 
             Entity entity = col.GetComponent<Entity>();
             if (entity)
             {
                 if ((entitiesCanPick && entity.IsAI()) || (playersCanPick && entity.IsPlayer()))
                 {
-                    if (!autoPickUp || (autoPickUp && !moveWhenDisappear) || !rigidbody)
-                    {
-                        SendMessage("PickUp", entity);
-                        GameObject.Destroy(gameObject);
-                    }
-                    else
-                    {
-                        rigidbody.useGravity = false;
-
-                        autoPickUp = false;
-                        UpdateCollider();
-
-                        if(!disappearingTarget)
-                            disappearingTarget = entity;
-                    }
+                    SendMessage("PickUp", entity);
+                    GameObject.Destroy(gameObject);
                 }
             }
         }
@@ -102,6 +75,7 @@ namespace Crab
 }
 
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(Crab.Item))]
 public class ItemEditor : Editor
 {
@@ -119,7 +93,6 @@ public class ItemEditor : Editor
         DrawPropertiesExcluding(serializedObject, new string[] {
             "autoPickUp",
             "pickUpDistance",
-            "moveWhenDisappear",
             "playersCanPick",
             "entitiesCanPick",
             "radius"
@@ -132,8 +105,6 @@ public class ItemEditor : Editor
         if (t.autoPickUp)
         {
             t.pickUpDistance = EditorGUILayout.FloatField("Pick Up Distance", t.pickUpDistance);
-
-            t.moveWhenDisappear = EditorGUILayout.Toggle("Follow on pick up", t.moveWhenDisappear);
 
             EditorGUILayout.LabelField("Can be picked By: ", EditorStyles.boldLabel);
             t.playersCanPick = EditorGUILayout.Toggle("  Players", t.playersCanPick);
@@ -163,3 +134,4 @@ public class ItemEditor : Editor
         }
     }
 }
+#endif

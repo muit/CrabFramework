@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
-using System.Collections;
-using Crab;
+#endif
 
 namespace Crab.Components
 {
@@ -32,6 +32,7 @@ namespace Crab.Components
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(Crab.Components.CAttributes))]
 public class CAttributesEditor : Editor {
     Crab.Components.CAttributes t;
@@ -51,3 +52,4 @@ public class CAttributesEditor : Editor {
         serializedObject.ApplyModifiedProperties();
     }
 }
+#endif
