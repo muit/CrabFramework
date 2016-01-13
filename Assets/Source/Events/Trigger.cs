@@ -31,10 +31,10 @@ namespace Crab.Events
             if (IsInLayerMask(col.gameObject, affectedLayers)) {
 
                 eventsFired.ForEach(x => {
-                    if (x) x.SendMessage("StartEvent");
+                    if (x && x.isActiveAndEnabled) x.SendMessage("StartEvent");
                 });
                 eventsFinished.ForEach(x => {
-                    if (x) x.SendMessage("FinishEvent");
+                    if (x && x.isActiveAndEnabled) x.SendMessage("FinishEvent");
                 });
             }
         }

@@ -25,8 +25,10 @@ namespace Crab.Components {
         //Pathfinding
         [Header("Pathfinding")]
         public float reachDistance = 1;
+        public bool movementPrediction = false;
         private NavMeshAgent agent;
         private Transform agentTarget;
+        private CharacterController targetCController;
         private CharacterController characterController;
 
         void Awake() {
@@ -70,6 +72,7 @@ namespace Crab.Components {
                 return;
              
             agentTarget = trans;
+            targetCController = agentTarget.GetComponent<CharacterController>();
             agent.SetDestination(trans.position);
             agent.Resume();
         }
@@ -87,8 +90,19 @@ namespace Crab.Components {
             {
                 if (agentTarget)
                 {
-                    agent.destination = agentTarget.position;
-                    if (agent.remainingDistance >= reachDistance)
+                    float distance = Vector3.Magnitude(transform.position - agentTarget.position);
+                    if (movementPrediction && targetCController)
+                    {
+                        //Different Algorithm
+                        //agent.destination = agentTarget.position +agentTarget.forward * (agentTarget.InverseTransformDirection(targetCController.velocity).z/2);
+                        agent.destination = agentTarget.position + targetCController.velocity * Mathf.Clamp(distance - reachDistance, 0, 1)/2;
+                        Debug.DrawLine(transform.position, agent.destination);
+                    }
+                    else
+                    {
+                        agent.destination = agentTarget.position;
+                    }
+                    if (distance >= reachDistance)
                     {
                         agent.Resume();
                     }
