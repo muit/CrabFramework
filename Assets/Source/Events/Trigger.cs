@@ -20,6 +20,8 @@ namespace Crab.Events
         public Vector3 size;
         public LayerMask affectedLayers;
 
+        public bool debug = true;
+
         void OnEnable() {
             tCollider = GetComponent<Collider>();
 
@@ -46,6 +48,9 @@ namespace Crab.Events
 
         //Render Event Conections
         void OnDrawGizmos() {
+            if (!debug)
+                return;
+
             Color gizmosColor = Gizmos.color;
 
             Gizmos.color = Color.red;
@@ -130,6 +135,7 @@ namespace Crab.Events
 
             EditorGUILayout.Space();
             EditorGUILayout.Space();
+            t.debug = EditorGUILayout.Toggle("Debug", t.debug);
             EditorGUILayout.LabelField("Don't edit the collider.", EditorStyles.boldLabel);
 
             serializedObject.ApplyModifiedProperties();
