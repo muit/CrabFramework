@@ -96,7 +96,7 @@ namespace Crab.Components {
                         //Different Algorithm
                         //agent.destination = agentTarget.position +agentTarget.forward * (agentTarget.InverseTransformDirection(targetCController.velocity).z/2);
                         agent.destination = agentTarget.position + targetCController.velocity * Mathf.Clamp(distance - reachDistance, 0, 1)/2;
-                        Debug.DrawLine(transform.position, agent.destination);
+                        //Debug.DrawLine(transform.position, agent.destination);
                     }
                     else
                     {
