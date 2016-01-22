@@ -13,6 +13,7 @@ namespace Crab
         public float pointDistance = 1;
         public Vector3 offset;
         public float updateRate = 0.25f;
+        public bool testHeight = false;
         [Space()]
         public VisibleFilter filter;
 
@@ -54,14 +55,37 @@ namespace Crab
                 for (int p = 0; p < points; p++)
                 {
                     Vector3 point = new Vector3(zero.x + pointDistance * (p - points / 2), zero.y, zero.z + pointDistance * (l - points / 2));
-                    map.Add(point);
 
-                    //Run filters
-                    if (filter.IsValid(point))
+                    if (testHeight)
                     {
-                        validPoints.Add(point);
+                        Vector3 upPoint = point;
+                        upPoint.y += 10f;
+
+                        RaycastHit hit;
+                        if (Physics.Raycast(upPoint, Vector3.down, out hit, 100f))
+                        {
+                            NavMeshHit nhit;
+                            if(NavMesh.SamplePosition(hit.point, out nhit, 1f, NavMesh.AllAreas))
+                            {
+                                point.y = nhit.position.y + 0.5f;
+                                AddPoint(point);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AddPoint(point);
                     }
                 }
+            }
+        }
+
+        private void AddPoint(Vector3 point)
+        {
+            map.Add(point);
+            if (filter.IsValid(point))
+            {
+                validPoints.Add(point);
             }
         }
 
@@ -109,17 +133,17 @@ namespace Crab
             {
                 if (!target)
                     return false;
-
                 RaycastHit hit;
                 if (Physics.Raycast(point, target.position - point, out hit, Vector3.Distance(target.position, point), affectedLayers))
                 {
                     if (hit.transform == target)
                     {
+                        //Is Visible because target collided
                         return true;
                     }
-
                     return false;
                 }
+                //Is Visible because nothing collided
                 return true;
             }
         }
