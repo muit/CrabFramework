@@ -2,6 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public class DataRow {
+public class DataRow
+{
     public string name;
 }

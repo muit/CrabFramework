@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class WeaponRow : DataRow {
-    int damage = 5;
+    public int damage = 5;
+    public float range = 3;
 }
