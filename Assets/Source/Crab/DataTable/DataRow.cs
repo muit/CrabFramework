@@ -8,8 +8,12 @@ using UnityEditor;
 [System.Serializable]
 public class DataRow
 {
-    public Dictionary<string, Attribute> rows = new Dictionary<string, Attribute>();
+    [System.Serializable]
+    public class AttributeContainer : SerializableDictionary<string, Attribute> { }
+    public DataRowType dataRow;
+    public AttributeContainer attributes = new AttributeContainer();
 
+    [System.Serializable]
     public class Attribute
     {
         public enum Type
@@ -79,6 +83,15 @@ public class DataRow
         }
 #endif
     }
+}
 
-
+[CustomPropertyDrawer(typeof(DataRow.Attribute))]
+public class AttributeDrawer : PropertyDrawer
+{
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        EditorGUI.BeginProperty(position, label, property);
+        EditorGUI.PropertyField(position, property.FindPropertyRelative("type"));
+        EditorGUI.EndProperty();
+    }
 }
