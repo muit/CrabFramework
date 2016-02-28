@@ -11,10 +11,6 @@ public class DataRowTypeDrawer : PropertyDrawer
         EditorGUI.BeginProperty(position, label, property);
 
         
-
-
-
-
         EditorGUI.EndProperty();
     }
 }

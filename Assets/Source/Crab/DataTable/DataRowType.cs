@@ -3,6 +3,7 @@
 using UnityEditor;
 #endif
 
+[System.Serializable]
 public class DataRowType : ScriptableObject {
 #if UNITY_EDITOR
     [MenuItem("Assets/Create/Crab/DataRow")]
