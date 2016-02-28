@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Crab.Controllers;
+using Crab;
 
 namespace Crab.Events
 {

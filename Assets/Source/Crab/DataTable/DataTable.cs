@@ -9,7 +9,7 @@ using UnityEditor;
 [Serializable]
 public class DataTable : ScriptableObject
 {
-    public SerializableSystemType type;
+    public DataRowType type;
     public List<DataRow> rows = new List<DataRow>();
 
     void OnEnable() {
@@ -17,8 +17,9 @@ public class DataTable : ScriptableObject
 
     public void AddNew()
     {
-        Debug.Log(type.SystemType);   
-        Add((DataRow)Activator.CreateInstance(type.SystemType));
+        DataRow row = new DataRow();
+        row.type = type;
+        Add(row);
     }
 
     public void Add(DataRow dataRow) {
@@ -26,16 +27,9 @@ public class DataTable : ScriptableObject
             rows.Add(dataRow);
     }
 
-    public T FindById<T>(int id)
-        where T : DataRow
+    public DataRow FindById(int id)
     {
-        if (typeof(T) != type.SystemType)
-        {
-            Debug.LogError("Trying to find in a database with the incorrect type.");
-            return null;
-        }
-
-        return (T) rows[id];
+        return rows[id];
     }
 
     #if UNITY_EDITOR

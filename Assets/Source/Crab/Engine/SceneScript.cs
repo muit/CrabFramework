@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-using Crab.Controllers;
+using Crab;
 using Crab.Events;
+using UnityEngine.SceneManagement;
 
 public class SceneScript : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class SceneScript : MonoBehaviour
 
     public void LoadScene(int scene)
     {
-        Application.LoadLevelAsync(scene);
+        SceneManager.LoadSceneAsync(scene);
     }
 
 

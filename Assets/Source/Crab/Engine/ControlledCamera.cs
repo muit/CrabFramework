@@ -1,5 +1,5 @@
-﻿using Crab.Components;
-using UnityEngine;
+﻿using UnityEngine;
+using Crab.Entities;
 
 namespace Crab {
     [RequireComponent(typeof(Camera))]

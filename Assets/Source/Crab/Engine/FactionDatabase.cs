@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace Crab
 {
-    using Controllers;
+    using Entities;
 
     public class FactionDatabase : MonoBehaviour {
         // Static singleton property

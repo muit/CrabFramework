@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using Crab;
 
 public class CameraMovement : MonoBehaviour {
 	public EntityController motion;

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Crab;
-using Crab.Controllers;
+using Crab.Entities;
 
 public class EnemyController : FactionController
 {

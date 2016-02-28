@@ -10,6 +10,7 @@ public class DataRowTypeDrawer : PropertyDrawer
     {
         EditorGUI.BeginProperty(position, label, property);
 
+        EditorGUI.ObjectField(position, property, label);
         
         EditorGUI.EndProperty();
     }

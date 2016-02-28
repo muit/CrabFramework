@@ -15,6 +15,12 @@ public class DataRowType : ScriptableObject {
     }
 #endif
 
+    public string Name {
+        get { return m_name; }
+    }
+    [SerializeField]
+    private string m_name;
+
     public DataRow.AttributeContainer attributes = new DataRow.AttributeContainer();
 }
 

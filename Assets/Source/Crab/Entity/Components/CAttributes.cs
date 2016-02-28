@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using Crab.Entities;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace Crab.Components
+namespace Crab.Entities
 {
     [RequireComponent(typeof(Entity))]
     [DisallowMultipleComponent]
@@ -33,13 +34,13 @@ namespace Crab.Components
 }
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(Crab.Components.CAttributes))]
+[CustomEditor(typeof(CAttributes))]
 public class CAttributesEditor : Editor {
-    Crab.Components.CAttributes t;
+    CAttributes t;
     SerializedProperty faction;
 
     void Awake() {
-        t = target as Crab.Components.CAttributes;
+        t = target as CAttributes;
 
         faction = serializedObject.FindProperty("faction");
     }

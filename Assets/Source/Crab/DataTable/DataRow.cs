@@ -8,10 +8,24 @@ using UnityEditor;
 [System.Serializable]
 public class DataRow
 {
+    [HideInInspector]
+    public AttributeContainer attributes = new AttributeContainer();
+
+    public DataRowType type {
+        set {
+            attributes.Clear();
+
+            DataRow.AttributeContainer attrs = value.attributes;
+            foreach (string key in attrs.Keys) {
+                attributes.Add(key, new Attribute(attrs[key].type));
+            }
+        }
+    }
+
+
+
     [System.Serializable]
     public class AttributeContainer : SerializableDictionary<string, Attribute> { }
-    public DataRowType dataRow;
-    public AttributeContainer attributes = new AttributeContainer();
 
     [System.Serializable]
     public class Attribute
@@ -46,6 +60,13 @@ public class DataRow
         public Vector3 vector3Value;
         [System.NonSerialized]
         public Vector4 vector4Value;
+
+        
+        public Attribute(Type type = Type.Bool)
+        {
+            this.type = type;
+        }
+        
 
 #if UNITY_EDITOR
         public void OnGUI()

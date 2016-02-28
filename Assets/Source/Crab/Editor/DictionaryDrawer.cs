@@ -13,13 +13,13 @@ public class AttributeContainerDrawer : DictionaryDrawer<string, DataRow.Attribu
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        DataRow.AttributeContainer dictionary = fieldInfo.GetValue(property.serializedObject.targetObject) as DataRow.AttributeContainer;
 
 
 
         EditorGUI.BeginProperty(position, label, property);
-        
-        if(GUI.Button(new Rect(position.x + position.width-30, position.y, 15, 15), "+")) {
+        DataRow.AttributeContainer dictionary = fieldInfo.GetValue(property.serializedObject.targetObject) as DataRow.AttributeContainer;
+
+        if (GUI.Button(new Rect(position.x + position.width-30, position.y, 15, 15), "+")) {
             if(!dictionary.Contains("New Attribute"))
                 dictionary.Add("New Attribute", new DataRow.Attribute());
         }
@@ -29,8 +29,7 @@ public class AttributeContainerDrawer : DictionaryDrawer<string, DataRow.Attribu
         }
 
         if (property.isExpanded = EditorGUI.Foldout(new Rect(position.x, position.y, position.width, 15), property.isExpanded, label)) {
-            var indent = EditorGUI.indentLevel;
-
+            
             int i = 0;
             Dictionary<string, string> renames = new Dictionary<string, string>();
 
@@ -48,12 +47,12 @@ public class AttributeContainerDrawer : DictionaryDrawer<string, DataRow.Attribu
             foreach (KeyValuePair<string, string> rename in renames) {
                 dictionary.RenameKey(rename.Key, rename.Value);
             }
-            
+
 
         }
 
-        EditorGUI.EndProperty();
-
         fieldInfo.SetValue(property.serializedObject.targetObject, dictionary);
+
+        EditorGUI.EndProperty();
     }
 }

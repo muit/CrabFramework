@@ -59,7 +59,7 @@ public class Databases : EditorWindow
 
             EditorGUI.indentLevel++;
             itemName = EditorGUILayout.TextField(itemName);
-            itemMesh = EditorGUILayout.ObjectField(itemMesh, typeof(GameObject)) as GameObject;
+            itemMesh = EditorGUILayout.ObjectField(itemMesh, typeof(GameObject), false) as GameObject;
             /*
             if (GUILayout.Button((showItemsAdvanced ? "    ↖ " : "    ↓ ") + "Advanced", EditorStyles.label))
             {

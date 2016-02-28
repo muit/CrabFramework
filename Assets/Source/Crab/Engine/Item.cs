@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using UnityEngine.Events;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -19,6 +19,11 @@ namespace Crab
         public bool entitiesCanPick = false;
 
         public float radius = 0.3f;
+
+        public UnityEvent OnPickUp;
+
+        [SerializeField]
+        new private SphereCollider collider;
         
 
         void Start()
@@ -27,9 +32,10 @@ namespace Crab
             UpdateCollider();
         }
 
-        void UpdateCollider()
+        public void UpdateCollider()
         {
-            SphereCollider collider = GetComponent<SphereCollider>();
+            collider = collider? collider : collider = GetComponent<SphereCollider>();
+
             float scaleSize = Mathf.Max(new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
             if (autoPickUp)
             {
@@ -66,6 +72,7 @@ namespace Crab
             {
                 if ((entitiesCanPick && entity.IsAI()) || (playersCanPick && entity.IsPlayer()))
                 {
+                    OnPickUp.Invoke();
                     SendMessage("PickUp", entity);
                     GameObject.Destroy(gameObject);
                 }
@@ -80,35 +87,26 @@ namespace Crab
 public class ItemEditor : Editor
 {
     Crab.Item t;
-
+    SphereCollider collider;
     void Awake()
     {
         t = target as Crab.Item;
+        collider = t.GetComponent<SphereCollider>();
     }
 
     public override void OnInspectorGUI()
     {
+        t.UpdateCollider();
         serializedObject.Update();
 
-        DrawPropertiesExcluding(serializedObject, new string[] {
-            "autoPickUp",
-            "pickUpDistance",
-            "playersCanPick",
-            "entitiesCanPick",
-            "radius"
-        });
+        //EditorGUILayout.PropertyField(serializedObject.FindProperty("attributes"));
 
-
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("moveWhenDisappear"), new GUIContent("Fly"));
         t.autoPickUp = EditorGUILayout.Toggle("Auto Pick Up", t.autoPickUp);
-
         EditorGUI.indentLevel++;
         if (t.autoPickUp)
         {
             t.pickUpDistance = EditorGUILayout.FloatField("Pick Up Distance", t.pickUpDistance);
-
-            EditorGUILayout.LabelField("Can be picked By: ", EditorStyles.boldLabel);
-            t.playersCanPick = EditorGUILayout.Toggle("  Players", t.playersCanPick);
-            t.entitiesCanPick = EditorGUILayout.Toggle("  Entities", t.entitiesCanPick);
         }
         else
         {
@@ -116,21 +114,22 @@ public class ItemEditor : Editor
         }
         EditorGUI.indentLevel--;
 
-        serializedObject.ApplyModifiedProperties();
+        GUILayout.Space(5);
+
+        EditorGUILayout.LabelField("Can be picked By: ", EditorStyles.boldLabel);
+        EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("playersCanPick"), new GUIContent("  Players"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("entitiesCanPick"), new GUIContent("  Entities"));
+        EditorGUI.indentLevel--;
+
+        GUILayout.Space(5);
+
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("OnPickUp"));
 
         if (GUI.changed)
         {
-            SphereCollider collider = t.GetComponent<SphereCollider>();
-            float scaleSize = Mathf.Max(new float[] { t.transform.localScale.x, t.transform.localScale.y, t.transform.localScale.z });
-            if (t.autoPickUp)
-            {
-                collider.radius = t.pickUpDistance / scaleSize;
-            }
-            else
-            {
-                collider.radius = t.radius / scaleSize;
-            }
-            collider.isTrigger = true;
+            serializedObject.ApplyModifiedProperties();
+            t.UpdateCollider();
         }
     }
 }

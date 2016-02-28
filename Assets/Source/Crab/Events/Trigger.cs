@@ -15,8 +15,7 @@ namespace Crab.Events
         [System.NonSerialized]
         public Collider tCollider;
 
-        public List<Crab.Event> eventsFired = new List<Crab.Event>();
-        public List<Crab.Event> eventsFinished = new List<Crab.Event>();
+        public List<EventLink> events = new List<EventLink>();
         public Vector3 size;
         public LayerMask affectedLayers;
 
@@ -31,14 +30,14 @@ namespace Crab.Events
 
         void OnTriggerEnter(Collider col) {
             if (IsInLayerMask(col.gameObject, affectedLayers)) {
-
-                eventsFired.ForEach(x => {
-                    if (x && x.isActiveAndEnabled) x.SendMessage("StartEvent");
-                });
-                eventsFinished.ForEach(x => {
-                    if (x && x.isActiveAndEnabled) x.SendMessage("FinishEvent");
-                });
+                Fire();
             }
+        }
+
+        public void Fire() {
+            events.ForEach(x => {
+                if (x != null && x.ev && x.ev.isActiveAndEnabled) x.ev.SendMessage("StartEvent");
+            });
         }
 
         private bool IsInLayerMask(GameObject obj, LayerMask layerMask) {
@@ -53,57 +52,54 @@ namespace Crab.Events
 
             Color gizmosColor = Gizmos.color;
 
-            Gizmos.color = Color.red;
-            eventsFinished.ForEach(x => {
-                if (x) Gizmos.DrawLine(transform.position, x.transform.position);
-            });
-
-            Gizmos.color = Color.green;
-            eventsFired.ForEach(x => {
-                if (x) Gizmos.DrawLine(transform.position, x.transform.position);
+            events.ForEach(x => {
+                Gizmos.color = x.color;
+                if (x != null && x.ev)
+                {
+                    Gizmos.DrawLine(transform.position, x.ev.transform.position);
+                }
             });
 
             Gizmos.color = gizmosColor;
+        }
+
+        [System.Serializable]
+        public sealed class EventLink {
+            public Crab.Event ev;
+            public Color color = Color.green;
         }
     }
 
 
     #if UNITY_EDITOR
-    [CustomEditor(typeof(Trigger))]
+    [CustomEditor(typeof(Trigger), true)]
     public class TriggerEditor : Editor
     {
         protected Trigger t;
-        private ReorderableList firedEvents;
-        private ReorderableList finishedEvents;
+        private ReorderableList events;
 
         private void OnEnable() {
-            firedEvents = new ReorderableList(serializedObject,
-                    serializedObject.FindProperty("eventsFired"),
+            events = new ReorderableList(serializedObject,
+                    serializedObject.FindProperty("events"),
                     true, true, true, true);
-            firedEvents.drawHeaderCallback = (Rect rect) => {
-                EditorGUI.LabelField(rect, "Fired Events");
+            events.drawHeaderCallback = (Rect rect) => {
+                EditorGUI.LabelField(rect, "Activation");
             };
-            firedEvents.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
-                var element = firedEvents.serializedProperty.GetArrayElementAtIndex(index);
+            events.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+                var element = events.serializedProperty.GetArrayElementAtIndex(index);
                 rect.y += 2;
                 EditorGUI.PropertyField(
-                    new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
-                    element, GUIContent.none);
-            };
+                    new Rect(rect.x, rect.y, rect.width- 60, EditorGUIUtility.singleLineHeight),
+                    element.FindPropertyRelative("ev"), GUIContent.none);
 
+                SerializedProperty color = element.FindPropertyRelative("color");
 
-            finishedEvents = new ReorderableList(serializedObject,
-                    serializedObject.FindProperty("eventsFinished"),
-                    true, true, true, true);
-            finishedEvents.drawHeaderCallback = (Rect rect) => {
-                EditorGUI.LabelField(rect, "Finished Events");
-            };
-            finishedEvents.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
-                var element = finishedEvents.serializedProperty.GetArrayElementAtIndex(index);
-                rect.y += 2;
+                if (default(Color) == color.colorValue)
+                    color.colorValue = Color.green;
+
                 EditorGUI.PropertyField(
-                    new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
-                    element, GUIContent.none);
+                    new Rect(rect.x + rect.width - 60, rect.y, 60, EditorGUIUtility.singleLineHeight),
+                    element.FindPropertyRelative("color"), GUIContent.none);
             };
         }
 
@@ -119,39 +115,36 @@ namespace Crab.Events
 
         public override void OnInspectorGUI() {
             serializedObject.Update();
-
-            EditorGUILayout.LabelField("Affected Layers");
-            t.affectedLayers = Util.LayerMaskField(t.affectedLayers);
-
+            
             UpdateGUI();
 
-            
-            //EditorGUILayout.LabelField("Fires Event", EditorStyles.largeLabel);
-            firedEvents.DoLayoutList();
-            
-            //EditorGUILayout.LabelField("Finishes Event", EditorStyles.largeLabel);
-            finishedEvents.DoLayoutList();
+            events.DoLayoutList();
 
-
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
             t.debug = EditorGUILayout.Toggle("Debug", t.debug);
-            EditorGUILayout.LabelField("Don't edit the collider.", EditorStyles.boldLabel);
 
-            serializedObject.ApplyModifiedProperties();
 
             if (GUI.changed)
             {
                 t.tCollider.isTrigger = true;
                 UpdateCollider();
 
+                serializedObject.ApplyModifiedProperties();
                 EditorUtility.SetDirty(target);
             }
         }
 
-        protected virtual void UpdateGUI() {
-            EditorGUILayout.LabelField("Size");
-            t.size = EditorGUILayout.Vector3Field("", t.size);
+        protected virtual void UpdateGUI()
+        {
+            SerializedProperty layers = serializedObject.FindProperty("affectedLayers");
+            layers.isExpanded = EditorGUILayout.Foldout(layers.isExpanded, "Collider Settings");
+
+            if(layers.isExpanded)
+            {
+                EditorGUI.indentLevel++;
+                t.affectedLayers = Util.LayerMaskField("Layers", t.affectedLayers);
+                t.size = EditorGUILayout.Vector3Field("Size", t.size);
+                EditorGUI.indentLevel--;
+            }
         }
 
         protected virtual void UpdateCollider()

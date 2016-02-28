@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Crab.Controllers
+namespace Crab.Entities
 {
 
     public class FactionController : AIController

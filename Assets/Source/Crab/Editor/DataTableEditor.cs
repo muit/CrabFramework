@@ -17,8 +17,6 @@ public class DataTableEditor : EditorWindow
 
     private DataTable m_dataTable;
     private SerializedObject serialized;
-    SerializedProperty rows;
-    IEnumerable<FieldInfo> fields;
 
     void OnSelectionChange()
     {
@@ -43,8 +41,6 @@ public class DataTableEditor : EditorWindow
         if (m_dataTable)
         {
             serialized = new SerializedObject(m_dataTable);
-            rows = serialized.FindProperty("rows");
-            fields = m_dataTable.type.SystemType.GetFields().AsEnumerable<FieldInfo>().OrderBy(field => field.MetadataToken);
         }
     }
 
@@ -80,6 +76,7 @@ public class DataTableEditor : EditorWindow
 
         if (m_dataTable.type != null)
         {
+            /*
             foreach (FieldInfo attr in fields)
             {
                 GUILayout.BeginVertical();
@@ -87,18 +84,18 @@ public class DataTableEditor : EditorWindow
 
                 for (int i = 0; i < rows.arraySize; i++)
                 {
-                    /*
+                    
                     SerializedProperty row = rows.GetArrayElementAtIndex(i);
                     SerializedProperty prop = row.FindPropertyRelative(attr.Name);
 
                     if (prop != null)
                         EditorGUILayout.PropertyField(prop);
-                    */
+                    
 
                     OnPropertyGUI(i, attr);
                 }
                 GUILayout.EndVertical();
-            }
+            }*/
         }
 
         GUILayout.FlexibleSpace();

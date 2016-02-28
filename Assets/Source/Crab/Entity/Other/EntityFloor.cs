@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Crab;
-using Crab.Components;
+using Crab.Entities;
 
 namespace Crab.Utils
 {

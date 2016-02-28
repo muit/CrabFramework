@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Crab;
-using Crab.Components;
+using Crab.Entities;
 
-
-namespace Crab.Controllers
+namespace Crab
 {
     [RequireComponent(typeof(CMovement))]
     public class PlayerController : EntityController

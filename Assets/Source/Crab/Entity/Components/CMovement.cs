@@ -1,5 +1,6 @@
 ﻿
-namespace Crab.Components {
+namespace Crab.Entities
+{
     using UnityEngine;
     using Utils;
 
@@ -15,6 +16,7 @@ namespace Crab.Components {
         private Entity me;
         private Animator animator;
         private EntityFloor floor;
+
         //Camera
         [System.NonSerialized]
         public Vector3 viewDirection;

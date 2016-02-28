@@ -1,4 +1,4 @@
-﻿using Crab.Components;
+﻿using Crab.Entities;
 using UnityEngine;
 using UnityEditor;
 using Crab;

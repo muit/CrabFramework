@@ -3,7 +3,7 @@ using System.Collections;
 using Crab;
 
 
-namespace Crab.Components
+namespace Crab.Entities
 {
     [RequireComponent(typeof(Entity))]
     [DisallowMultipleComponent]

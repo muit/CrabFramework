@@ -1,9 +1,9 @@
-﻿using Crab.Components;
+﻿using UnityEngine;
+using System.Collections.Generic;
+using Crab.Entities;
 
-namespace Crab.Controllers
+namespace Crab
 {
-    using UnityEngine;
-    using System.Collections.Generic;
 
     [RequireComponent(typeof(Entity))]
     [RequireComponent(typeof(CMovement))]
@@ -53,7 +53,6 @@ namespace Crab.Controllers
             switch ((Events)id)
             {
                 case Events.BASIC_ATTACK:
-                    Debug.Log("Pum");
                     events.RestartEvent((int)Events.BASIC_ATTACK, Random.Range(3000, 6000));
                     break;
             }

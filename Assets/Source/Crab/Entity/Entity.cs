@@ -2,8 +2,7 @@
 namespace Crab {
     using UnityEngine;
     using System;
-    using Crab.Components;
-    using Crab.Controllers;
+    using Entities;
 
     public class Entity : MonoBehaviour
     {
@@ -11,18 +10,16 @@ namespace Crab {
 
         void Awake()
         {
-            controller = GetComponent<EntityController>();
+            m_controller = GetComponent<EntityController>();
 
             //Generate Controller
             if (controlledByFaction)
             {
-                controller = FactionDatabase.AddController(this, Attributes.faction);
+                m_controller = FactionDatabase.AddController(this, Attributes.faction);
             }
-            if (!controller) {
-                controller = gameObject.AddComponent<EntityController>();
+            if (!m_controller) {
+                m_controller = gameObject.AddComponent<EntityController>();
             }
-
-            AI = controller as AIController;
         }
 
         //Public Methods
@@ -31,32 +28,36 @@ namespace Crab {
 
             if (!Attributes.IsAlive())
             {
-                controller.SendMessage("JustDead", damageCauser);
-                damageCauser.Controller.SendMessage("JustKilled", this);
+                m_controller.SendMessage("JustDead", damageCauser);
+                damageCauser.controller.SendMessage("JustKilled", this);
             }
             else
             {
                 //controller.AnyDamage(damage, damageCauser, damageType);
 
-                if (IsAI() && !AI.IsInCombatWith(damageCauser))
+                if (IsAI() && !ai.IsInCombatWith(damageCauser))
                 {
-                    AI.StartCombatWith(damageCauser);
+                    ai.StartCombatWith(damageCauser);
                 }
             }
         }
 
         public bool IsPlayer() {
-            return controller as PlayerController;
+            return m_controller as PlayerController;
         }
 
-        private EntityController controller;
-        public EntityController Controller {
-            get { return controller; }
+        [SerializeField]
+        private EntityController m_controller;
+        public EntityController controller {
+            get { return m_controller; }
         }
-        [System.NonSerialized]
-        public AIController AI;
+
+        private AIController m_ai;
+        public AIController ai {
+            get { return m_ai ? m_ai : m_ai = m_controller as AIController; }
+        }
         public bool IsAI() {
-            return AI? AI : AI = controller as AIController;
+            return ai;
         }
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using Crab.Debug;
 
-namespace Crab.Components
+namespace Crab.Entities
 {
     [RequireComponent(typeof(Entity))]
     [RequireComponent(typeof(SphereCollider))]
@@ -69,7 +69,7 @@ namespace Crab.Components
                 {
                     if (me.IsAI())
                     {
-                        me.AI.StopCombatWith(lostEntity);
+                        me.ai.StopCombatWith(lostEntity);
                     }
                     //Error: Failed to convert parameters
                     //onEntityDetected.Invoke(target);
@@ -106,7 +106,7 @@ namespace Crab.Components
                         {
                             if (me.IsAI())
                             {
-                                me.AI.StartCombatWith(target);
+                                me.ai.StartCombatWith(target);
                             }
                             //Error: Failed to convert parameters
                             //onEntityDetected.Invoke(target);

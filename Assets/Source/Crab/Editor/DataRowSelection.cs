@@ -23,7 +23,7 @@ public class DataRowSelection : EditorWindow {
 
 
     public string assetPath;
-    private System.Type[] rowTypes;
+    private DataRowType[] rowTypes;
     private string[] rowTypeNames;
     private int selectedRowType = 0;
     
@@ -32,11 +32,8 @@ public class DataRowSelection : EditorWindow {
         //Get all row types
         if (rowTypes == null)
         {
-            rowTypes = Assembly.GetAssembly(typeof(DataRow)).GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(DataRow)))
-                .ToArray();
-
-            rowTypeNames = rowTypes.Select(t => t.Name).ToArray();
+            rowTypes = Resources.FindObjectsOfTypeAll<DataRowType>();
+            rowTypeNames = rowTypes.Select(t => t.name).ToArray();
         }
 
         EditorGUILayout.LabelField("Select the datatable row type:");
@@ -50,7 +47,7 @@ public class DataRowSelection : EditorWindow {
 
         if (GUILayout.Button("Create", EditorStyles.toolbarButton)) {
             DataTable dataTable = ScriptableObject.CreateInstance<DataTable>();
-            dataTable.type = new SerializableSystemType(rowTypes[selectedRowType]);
+            dataTable.type = rowTypes[selectedRowType];
             ProjectWindowUtil.CreateAsset(dataTable, assetPath);
             this.Close();
         }
