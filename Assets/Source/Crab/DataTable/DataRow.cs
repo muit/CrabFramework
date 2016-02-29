@@ -11,12 +11,15 @@ public class DataRow
     [HideInInspector]
     public AttributeContainer attributes = new AttributeContainer();
 
-    public DataRowType type {
-        set {
+    public DataRowType type
+    {
+        set
+        {
             attributes.Clear();
 
             DataRow.AttributeContainer attrs = value.attributes;
-            foreach (string key in attrs.Keys) {
+            foreach (string key in attrs.Keys)
+            {
                 attributes.Add(key, new Attribute(attrs[key].type));
             }
         }
@@ -44,62 +47,79 @@ public class DataRow
 
         public Type type = Type.Bool;
 
-        [System.NonSerialized]
         public bool boolValue;
-        [System.NonSerialized]
         public int intValue;
-        [System.NonSerialized]
         public float floatValue;
-        [System.NonSerialized]
         public string stringValue;
-        [System.NonSerialized]
         public Color colorValue;
-        [System.NonSerialized]
         public Vector2 vector2Value;
-        [System.NonSerialized]
         public Vector3 vector3Value;
-        [System.NonSerialized]
         public Vector4 vector4Value;
 
-        
+
         public Attribute(Type type = Type.Bool)
         {
             this.type = type;
         }
-        
+
 
 #if UNITY_EDITOR
-        public void OnGUI()
+        public static void OnPaintId(int id)
         {
-            switch (type)
+            if (id < 0) return;
+
+            Rect position = GUILayoutUtility.GetRect(30, EditorGUIUtility.singleLineHeight);
+            GUIStyle style = GUI.skin.GetStyle("Tooltip");
+            style.alignment = TextAnchor.UpperCenter;
+            EditorGUI.LabelField(position, "" + id, style);
+        }
+
+        public static void OnPaintValue(SerializedProperty attribute)
+        {
+            Rect position = GUILayoutUtility.GetRect(100, EditorGUIUtility.singleLineHeight);
+
+            if (attribute == null)
+            {
+                Debug.Log(attribute);
+                return;
+            }
+
+            string property;
+            switch ((Type)attribute.FindPropertyRelative("type").enumValueIndex)
             {
                 case Type.Bool:
-                    boolValue = EditorGUILayout.Toggle(boolValue);
+                    property = "boolValue";
                     break;
                 case Type.Int:
-                    intValue = EditorGUILayout.IntField(intValue);
+                    property = "intValue";
                     break;
                 case Type.Float:
-                    floatValue = EditorGUILayout.FloatField(floatValue);
+                    property = "floatValue";
                     break;
                 case Type.String:
-                    stringValue = EditorGUILayout.TextField(stringValue);
+                    property = "stringValue";
                     break;
                 case Type.Color:
-                    colorValue = EditorGUILayout.ColorField(colorValue);
+                    property = "colorValue";
                     break;
                 case Type.Vector2:
-                    vector2Value = EditorGUILayout.Vector2Field("", vector2Value);
+                    property = "vector2Value";
                     break;
                 case Type.Vector3:
-                    vector3Value = EditorGUILayout.Vector3Field("", vector3Value);
+                    property = "vector3Value";
                     break;
                 case Type.Vector4:
-                    vector4Value = EditorGUILayout.Vector4Field("", vector4Value);
+                    property = "vector4Value";
                     break;
                 default:
                     EditorGUILayout.LabelField("Can't show this variable");
-                    break;
+                    return;
+            }
+            SerializedProperty value = attribute.FindPropertyRelative(property);
+
+            if (value != null)
+            {
+                EditorGUI.PropertyField(position, value, new GUIContent(""));
             }
         }
 #endif

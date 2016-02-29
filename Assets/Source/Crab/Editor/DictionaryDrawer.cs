@@ -13,10 +13,8 @@ public class AttributeContainerDrawer : DictionaryDrawer<string, DataRow.Attribu
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-
-
-
         EditorGUI.BeginProperty(position, label, property);
+
         DataRow.AttributeContainer dictionary = fieldInfo.GetValue(property.serializedObject.targetObject) as DataRow.AttributeContainer;
 
         if (GUI.Button(new Rect(position.x + position.width-30, position.y, 15, 15), "+")) {
@@ -50,8 +48,6 @@ public class AttributeContainerDrawer : DictionaryDrawer<string, DataRow.Attribu
 
 
         }
-
-        fieldInfo.SetValue(property.serializedObject.targetObject, dictionary);
 
         EditorGUI.EndProperty();
     }

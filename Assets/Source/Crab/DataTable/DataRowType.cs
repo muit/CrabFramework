@@ -3,18 +3,8 @@
 using UnityEditor;
 #endif
 
-[System.Serializable]
+[CreateAssetMenu(fileName = "Data", menuName = "Crab/DataRow", order = 1)]
 public class DataRowType : ScriptableObject {
-#if UNITY_EDITOR
-    [MenuItem("Assets/Create/Crab/DataRow")]
-    private static void CreateDataRowType()
-    {
-        string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-        DataRowType dataTable = ScriptableObject.CreateInstance<DataRowType>();
-        ProjectWindowUtil.CreateAsset(dataTable, path + "/New DataRow.asset");
-    }
-#endif
-
     public string Name {
         get { return m_name; }
     }

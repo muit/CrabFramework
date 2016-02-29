@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Reflection;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,11 +14,15 @@ public class DataTableEditor : EditorWindow
 
     private DataTable m_dataTable;
     private SerializedObject serialized;
+    private SerializedObject type;
+
+    public void OnInspectorUpdate()
+    {
+        OnSelectionChange();
+    }
 
     void OnSelectionChange()
     {
-        //Load the selected datatable
-
         DataTable selection = null;
 
         if (Selection.activeGameObject)
@@ -36,16 +37,17 @@ public class DataTableEditor : EditorWindow
         if (!selection)
             selection = Selection.activeObject as DataTable;
 
-        m_dataTable = selection;
-
-        if (m_dataTable)
+        if (m_dataTable != selection)
         {
-            serialized = new SerializedObject(m_dataTable);
+            m_dataTable = selection;
         }
+            
     }
 
     void OnGUI()
     {
+        EditorGUI.BeginChangeCheck();
+
         GUILayout.BeginHorizontal(EditorStyles.toolbar);
         GUI.enabled = m_dataTable != null;
         if (GUILayout.Button("+ Add Row", EditorStyles.toolbarButton))
@@ -60,101 +62,63 @@ public class DataTableEditor : EditorWindow
         if (!m_dataTable)
             return;
 
-        GUILayout.BeginHorizontal();
+        //Load Type
+        if (serialized == null)
+            serialized = new SerializedObject(m_dataTable);
+        if (type == null)
+            type = new SerializedObject(m_dataTable.type);
 
+        //Update Properties
+        serialized.Update();
+        type.Update();
+
+        SerializedProperty rows = serialized.FindProperty("rows");
+
+
+        GUILayout.BeginHorizontal();
         //Draw Ids
         GUILayout.BeginVertical();
         GUILayout.Label("Id", EditorStyles.miniButtonMid);
         for (int i = 0, len = m_dataTable.rows.Count; i < len; i++)
         {
-            GUILayout.Label("" + i);
+            DataRow.Attribute.OnPaintId(i);
         }
         GUILayout.EndVertical();
 
         //Draw Properties
-
-
         if (m_dataTable.type != null)
         {
-            /*
-            foreach (FieldInfo attr in fields)
+            SerializedProperty keys = type.FindProperty("attributes").FindPropertyRelative("m_keys");
+            for (int e = 0; e < keys.arraySize; e++)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label(attr.Name, EditorStyles.miniButtonMid);
-
+                SerializedProperty key = keys.GetArrayElementAtIndex(e);
+                GUILayout.Label(key.stringValue, EditorStyles.miniButtonMid);
+                
                 for (int i = 0; i < rows.arraySize; i++)
                 {
-                    
                     SerializedProperty row = rows.GetArrayElementAtIndex(i);
-                    SerializedProperty prop = row.FindPropertyRelative(attr.Name);
+                    SerializedProperty attrs = row.FindPropertyRelative("attributes");
 
-                    if (prop != null)
-                        EditorGUILayout.PropertyField(prop);
-                    
+                    if (attrs.FindPropertyRelative("m_values").arraySize != keys.arraySize)
+                    {
+                        //Change
+                    }
 
-                    OnPropertyGUI(i, attr);
+                    DataRow.Attribute.OnPaintValue(attrs.FindPropertyRelative("m_values").GetArrayElementAtIndex(e));
                 }
                 GUILayout.EndVertical();
-            }*/
+            }
         }
 
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
 
-
-        if (GUI.changed && serialized != null)
+        if (EditorGUI.EndChangeCheck())
         {
+            EditorUtility.SetDirty(m_dataTable);
             serialized.ApplyModifiedProperties();
-        }
-    }
-
-    void OnPropertyGUI(int id, FieldInfo field)
-    {
-        Debug.Log(field.FieldType.AssemblyQualifiedName);
-        object value = field.GetValue(Convert.ChangeType(m_dataTable.rows[id], field.ReflectedType));
-        object finalValue = null;
-
-        if (field.FieldType.Name == "UInt16" ||
-            field.FieldType.Name == "UInt32" ||
-            field.FieldType.Name == "UInt64" ||
-            field.FieldType.Name == "Int16" ||
-            field.FieldType.Name == "Int32" ||
-            field.FieldType.Name == "Int64")
-        {
-            finalValue = EditorGUILayout.IntField((int)value);
-        }
-        else
-        {
-            switch (field.FieldType.Name)
-            {
-                case "bool":
-                    finalValue = EditorGUILayout.Toggle((bool)value);
-                    break;
-                case "Single":
-                    finalValue = EditorGUILayout.FloatField((float)value);
-                    break;
-                case "String":
-                    finalValue = EditorGUILayout.TextField((string)value);
-                    break;
-                case "Vector2":
-                    finalValue = EditorGUILayout.Vector2Field("", (Vector2)value);
-                    break;
-                case "Vector3":
-                    finalValue = EditorGUILayout.Vector3Field("", (Vector3)value);
-                    break;
-                case "Color":
-                    finalValue = EditorGUILayout.ColorField((Color)value);
-                    break;
-                default:
-                    EditorGUILayout.LabelField("Can't show a " + field.FieldType.Name + "variable");
-                    break;
-            }
-        }
-        
-        if (finalValue != null)
-        {
-            field.SetValue(m_dataTable.rows[id], finalValue);
         }
     }
 }
