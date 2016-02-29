@@ -54,6 +54,12 @@ namespace Crab
                 gameObject.SetActive(true);
         }
 
+        //Render Event Conections
+        void OnDrawGizmos()
+        {
+            Event.RenderConnection(this, OnPickUp);
+        }
+
         //Events
         protected virtual void OnGameStart(SceneScript scene) { }
 
