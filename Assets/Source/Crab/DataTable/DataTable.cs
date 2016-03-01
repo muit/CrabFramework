@@ -32,8 +32,11 @@ public class DataTable : ScriptableObject
         return rows[id];
     }
 
-    #if UNITY_EDITOR
-    public void OnGUI() {
+    public DataRow this[int index]    // Indexer declaration
+    {
+        get
+        {
+            return rows[index];
+        }
     }
-    #endif
 }

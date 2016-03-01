@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -8,8 +9,8 @@ using UnityEditor;
 [System.Serializable]
 public class DataRow
 {
-    [HideInInspector]
-    public AttributeContainer attributes = new AttributeContainer();
+    [SerializeField, HideInInspector]
+    private AttributeContainer attributes = new AttributeContainer();
 
     public DataRowType type
     {
@@ -27,6 +28,97 @@ public class DataRow
 
 
 
+    /*****************
+     * Value Handlers
+     *****************/
+    public bool GetBool(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Bool);
+        if (attribute != null)
+            return attribute.boolValue;
+        return false;
+    }
+
+    public int GetInt(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Int);
+        if (attribute != null)
+            return attribute.intValue;
+        return default(int);
+    }
+
+    public float GetFloat(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Float);
+        if (attribute != null)
+            return attribute.floatValue;
+        return default(float);
+    }
+
+    public string GetString(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.String);
+        if (attribute != null)
+            return attribute.stringValue;
+        return null;
+    }
+
+    public Color GetColor(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Color);
+        if (attribute != null)
+            return attribute.colorValue;
+        return default(Color);
+    }
+
+    public Vector2 GetVector2(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Vector2);
+        if (attribute != null)
+            return attribute.vector2Value;
+        return Vector2.zero;
+    }
+
+    public Vector3 GetVector3(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Vector3);
+        if (attribute != null)
+            return attribute.vector2Value;
+        return Vector3.zero;
+    }
+
+    public Vector4 GetVector4(string attribute_name)
+    {
+        Attribute attribute = GetAttributeOfType(attribute_name, Attribute.Type.Vector4);
+        if (attribute != null)
+            return attribute.vector2Value;
+        return Vector4.zero;
+    }
+
+
+    //Find Attribute by name and type
+    private Attribute GetAttributeOfType(string name, Attribute.Type type)
+    {
+        Attribute attribute = attributes[name];
+        if (attribute == null)
+        {
+            Debug.LogWarning("Unknow attribute " + name);
+            return null;
+        }
+        if (attribute.type != type)
+        {
+            Debug.LogWarning("Attribute " + name + " is not a " + Enum.GetName(typeof(Attribute.Type), type));
+            return null;
+        }
+
+        return attribute;
+    }
+
+
+
+    /*************
+     * SubClasses
+     *************/
     [System.Serializable]
     public class AttributeContainer : SerializableDictionary<string, Attribute> { }
 
