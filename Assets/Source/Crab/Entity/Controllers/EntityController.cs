@@ -8,11 +8,11 @@ namespace Crab
     [DisallowMultipleComponent]
     public class EntityController : MonoBehaviour {
         protected Entity me;
-        protected EventsMap events;
+        protected EventsMap<int> events;
 
         void Start() {
             me = GetComponent<Entity>();
-            events = new EventsMap(this);
+            events = new EventsMap<int>(this);
             SendMessage("JustSpawned");
         }
 
