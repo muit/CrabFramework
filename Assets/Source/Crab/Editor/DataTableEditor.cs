@@ -40,8 +40,18 @@ public class DataTableEditor : EditorWindow
         if (m_dataTable != selection)
         {
             m_dataTable = selection;
+            Setup();
+            Repaint();
         }
             
+    }
+
+    void Setup() {
+        if (!m_dataTable)
+            return;
+
+        serialized = new SerializedObject(m_dataTable);
+        type = new SerializedObject(m_dataTable.type);
     }
 
     void OnGUI()
@@ -63,10 +73,8 @@ public class DataTableEditor : EditorWindow
             return;
 
         //Load Type
-        if (serialized == null)
-            serialized = new SerializedObject(m_dataTable);
-        if (type == null)
-            type = new SerializedObject(m_dataTable.type);
+        if (serialized == null || type == null)
+            Setup();
 
         //Update Properties
         serialized.Update();
