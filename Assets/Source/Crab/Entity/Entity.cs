@@ -23,7 +23,7 @@ namespace Crab {
         }
 
         //Public Methods
-        void Damage(int damage, Entity damageCauser, DamageType damageType) {
+        public void Damage(int damage, Entity damageCauser, DamageType damageType = DamageType.DEFAULT) {
             Attributes.Live -= damage;
 
             if (!Attributes.IsAlive())

@@ -30,16 +30,32 @@ namespace Crab.Events
 
         void OnTriggerEnter(Collider col) {
             if (IsInLayerMask(col.gameObject, affectedLayers)) {
+                OnEnter(col.gameObject);
                 Fire();
             }
         }
 
+        void OnTriggerExit(Collider col)
+        {
+            if (IsInLayerMask(col.gameObject, affectedLayers))
+            {
+                OnExit(col.gameObject);
+            }
+        }
+
         public void Fire() {
+            OnFire();
             events.ForEach(x => {
                 if (x != null && x.ev && x.ev.isActiveAndEnabled) x.ev.SendMessage("StartEvent");
             });
         }
 
+        //Callbacks
+        protected virtual void OnFire() { }
+        protected virtual void OnEnter(GameObject go) { }
+        protected virtual void OnExit(GameObject go) { }
+
+        //Handlers
         private bool IsInLayerMask(GameObject obj, LayerMask layerMask) {
             return (layerMask.value & (1 << obj.layer)) > 0;
         }
@@ -105,6 +121,11 @@ namespace Crab.Events
 
         void Awake()
         {
+            Setup();
+        }
+
+        protected void Setup()
+        {
             t = target as Trigger;
 
             //Find Collider or Create it
@@ -116,35 +137,42 @@ namespace Crab.Events
         public override void OnInspectorGUI() {
             serializedObject.Update();
             
-            UpdateGUI();
-
-            events.DoLayoutList();
-
-            t.debug = EditorGUILayout.Toggle("Debug", t.debug);
-
+            OnGUI();
 
             if (GUI.changed)
             {
-                t.tCollider.isTrigger = true;
-                UpdateCollider();
-
-                serializedObject.ApplyModifiedProperties();
-                EditorUtility.SetDirty(target);
+                OnChange();
             }
         }
 
-        protected virtual void UpdateGUI()
+        protected virtual void OnGUI()
         {
-            SerializedProperty layers = serializedObject.FindProperty("affectedLayers");
-            layers.isExpanded = EditorGUILayout.Foldout(layers.isExpanded, "Collider Settings");
+            events.DoLayoutList();
 
-            if(layers.isExpanded)
+            SerializedProperty layers = serializedObject.FindProperty("affectedLayers");
+            layers.isExpanded = EditorGUILayout.Foldout(layers.isExpanded, "Settings");
+
+            if (layers.isExpanded)
             {
                 EditorGUI.indentLevel++;
                 t.affectedLayers = Util.LayerMaskField("Layers", t.affectedLayers);
                 t.size = EditorGUILayout.Vector3Field("Size", t.size);
                 EditorGUI.indentLevel--;
             }
+
+            t.debug = EditorGUILayout.Toggle("Debug", t.debug);
+        }
+
+        protected void OnChange() {
+            t.tCollider.isTrigger = true;
+            UpdateCollider();
+
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(target);
+        }
+
+        protected virtual void UpdateGUI()
+        {
         }
 
         protected virtual void UpdateCollider()
