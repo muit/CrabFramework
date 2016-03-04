@@ -12,7 +12,11 @@ namespace Crab.Events
         public bool perSecond = false;
 
         private List<Entity> entitiesInside = new List<Entity>();
-        private Delay delay = new Delay(1000, true);
+        private Delay delay = new Delay(1000, false);
+
+        void Start() {
+            delay.Start();
+        }
 
         void Update() {
             int count = entitiesInside.Count;
