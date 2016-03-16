@@ -134,7 +134,11 @@ public class DataRow
             Color,
             Vector2,
             Vector3,
-            Vector4
+            Vector4,
+            Texture,
+            Audio,
+            GameObject,
+            Mesh
         }
 
         public Type type = Type.Bool;
@@ -147,6 +151,10 @@ public class DataRow
         public Vector2 vector2Value;
         public Vector3 vector3Value;
         public Vector4 vector4Value;
+        public Texture2D textureValue;
+        public AudioClip audioValue;
+        public GameObject goValue;
+        public Mesh meshValue;
 
 
         public Attribute(Type type = Type.Bool)
@@ -202,6 +210,18 @@ public class DataRow
                     break;
                 case Type.Vector4:
                     property = "vector4Value";
+                    break;
+                case Type.Texture:
+                    property = "textureValue";
+                    break;
+                case Type.Audio:
+                    property = "audioValue";
+                    break;
+                case Type.GameObject:
+                    property = "goValue";
+                    break;
+                case Type.Mesh:
+                    property = "meshValue";
                     break;
                 default:
                     EditorGUILayout.LabelField("Can't show this variable");
