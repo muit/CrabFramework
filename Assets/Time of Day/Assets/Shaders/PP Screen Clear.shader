@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Time of Day/Screen Clear"
 {
 	Properties
@@ -26,7 +28,7 @@ Shader "Hidden/Time of Day/Screen Clear"
 
 			v2f vert(appdata_img v) {
 				v2f o;
-				o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.position = UnityObjectToClipPos(v.vertex);
 				return o;
 			}
 

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 #ifndef TOD_BASE_INCLUDED
 #define TOD_BASE_INCLUDED
 
@@ -53,7 +55,7 @@ uniform float4 TOD_k4PI;
 uniform float4 TOD_kRadius;
 uniform float4 TOD_kScale;
 
-#define TOD_TRANSFORM_VERT(vert) mul(UNITY_MATRIX_MVP, vert)
+#define TOD_TRANSFORM_VERT(vert) UnityObjectToClipPos(vert)
 
 // Fast and simple tonemapping
 #define TOD_HDR2LDR(color) (1.0 - exp2(-TOD_Brightness * color))

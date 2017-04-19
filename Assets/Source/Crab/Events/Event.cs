@@ -59,6 +59,9 @@
 
         public static void RenderConnection(MonoBehaviour caster, UnityEvent ev)
         {
+            if (ev == null)
+                return;
+
             Color gizmosColor = Gizmos.color;
             for (int i = 0, len = ev.GetPersistentEventCount(); i < len; i++)
             {

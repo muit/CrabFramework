@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Time of Day/Scattering"
 {
 	Properties
@@ -46,7 +48,7 @@ Shader "Hidden/Time of Day/Scattering"
 				int index = (int)v.vertex.z;
 				v.vertex.z = 0.1;
 
-				o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.position = UnityObjectToClipPos(v.vertex);
 
 				o.uv.xy = v.texcoord.xy;
 				o.uv.zw = v.texcoord.xy * _ScreenParams.xy * (1.0 / BAYER_DIM);

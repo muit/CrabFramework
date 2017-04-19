@@ -7,13 +7,14 @@ namespace Crab
     public class PlayerController : EntityController
     {
         private CMovement movement;
-        void Awake()
+
+        protected virtual void Awake()
         {
             me = GetComponent<Entity>();
             movement = me.Movement;
         }
 
-        void Update()
+        protected virtual void Update()
         {
             movement.Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         }

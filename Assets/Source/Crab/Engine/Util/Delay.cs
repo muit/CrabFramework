@@ -48,5 +48,9 @@ namespace Crab.Utils
             started = true;
             endTime = 0;
         }
+
+        public bool IsStarted() {
+            return started;
+        }
     }
 }
