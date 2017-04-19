@@ -93,6 +93,7 @@ namespace Crab {
         }
 
         public bool IsEnemyOf(Entity entity) {
+            if (!entity) return false;
             if (!Attributes || !entity.Attributes) return true;
             if (Attributes.faction != entity.Attributes.faction) return true;
             if (Attributes.faction == FactionDatabase.NO_FACTION && 

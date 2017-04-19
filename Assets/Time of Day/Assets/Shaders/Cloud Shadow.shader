@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Projector' with 'unity_Projector'
+
 Shader "Time of Day/Cloud Shadow"
 {
 	Properties
@@ -22,7 +24,7 @@ Shader "Time of Day/Cloud Shadow"
 
 			uniform sampler2D _NoiseTexture1;
 			uniform sampler2D _NoiseTexture2;
-			uniform float4x4 _Projector;
+			uniform float4x4 unity_Projector;
 
 			struct v2f {
 				float4 position : SV_POSITION;
@@ -42,7 +44,7 @@ Shader "Time of Day/Cloud Shadow"
 				float3 vertnorm = TOD_LocalLightDirection;
 				float2 vertuv   = vertnorm.xz / pow(vertnorm.y + 0.1, 0.75);
 
-				float4 projPos  = mul(_Projector, v.vertex);
+				float4 projPos  = mul(unity_Projector, v.vertex);
 				float2 uvoffset = 0.5 + projPos.xy / projPos.w;
 
 #if FASTEST

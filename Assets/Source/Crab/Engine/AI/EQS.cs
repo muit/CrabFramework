@@ -64,8 +64,8 @@ namespace Crab
                         RaycastHit hit;
                         if (Physics.Raycast(upPoint, Vector3.down, out hit, 100f))
                         {
-                            NavMeshHit nhit;
-                            if(NavMesh.SamplePosition(hit.point, out nhit, 1f, NavMesh.AllAreas))
+                            UnityEngine.AI.NavMeshHit nhit;
+                            if(UnityEngine.AI.NavMesh.SamplePosition(hit.point, out nhit, 1f, UnityEngine.AI.NavMesh.AllAreas))
                             {
                                 point.y = nhit.position.y + 0.5f;
                                 AddPoint(point);

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "Time of Day/Space (Cube)"
 {
 	Properties
@@ -39,7 +41,7 @@ Shader "Time of Day/Space (Cube)"
 
 				o.position = TOD_TRANSFORM_VERT(v.vertex);
 
-				float3 worldNormal = normalize(mul((float3x3)_Object2World, v.normal));
+				float3 worldNormal = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
 
 				o.viewdir.xyz = v.normal;
 				o.viewdir.w   = saturate(worldNormal.y * TOD_SpaceBrightness);

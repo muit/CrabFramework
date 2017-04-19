@@ -78,29 +78,29 @@ public partial class TOD_Sky : MonoBehaviour
 
 	protected void LateUpdate()
 	{
-		Profiler.BeginSample("UpdateScattering");
+		UnityEngine.Profiling.Profiler.BeginSample("UpdateScattering");
 		UpdateScattering();
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 
-		Profiler.BeginSample("UpdateCelestials");
+		UnityEngine.Profiling.Profiler.BeginSample("UpdateCelestials");
 		UpdateCelestials();
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 
-		Profiler.BeginSample("UpdateQualitySettings");
+		UnityEngine.Profiling.Profiler.BeginSample("UpdateQualitySettings");
 		UpdateQualitySettings();
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 
-		Profiler.BeginSample("UpdateRenderSettings");
+		UnityEngine.Profiling.Profiler.BeginSample("UpdateRenderSettings");
 		UpdateRenderSettings();
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 
-		Profiler.BeginSample("UpdateShaderKeywords");
+		UnityEngine.Profiling.Profiler.BeginSample("UpdateShaderKeywords");
 		UpdateShaderKeywords();
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 
-		Profiler.BeginSample("UpdateShaderProperties");
+		UnityEngine.Profiling.Profiler.BeginSample("UpdateShaderProperties");
 		UpdateShaderProperties();
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 	}
 
 	protected void OnValidate()

@@ -28,7 +28,7 @@ namespace Crab.Entities
         [Header("Pathfinding")]
         public float reachDistance = 1;
         public bool movementPrediction = false;
-        private NavMeshAgent agent;
+        private UnityEngine.AI.NavMeshAgent agent;
         private Transform agentTarget;
         private CharacterController targetCController;
         private CharacterController characterController;
@@ -40,7 +40,7 @@ namespace Crab.Entities
 
             characterController = GetComponent<CharacterController>();
 
-            agent = GetComponent<NavMeshAgent>();
+            agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent)
             {
                 agent.stoppingDistance = reachDistance;

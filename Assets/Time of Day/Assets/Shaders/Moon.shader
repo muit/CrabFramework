@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "Time of Day/Moon"
 {
 	Properties
@@ -41,9 +43,9 @@ Shader "Time of Day/Moon"
 
 				o.position = TOD_TRANSFORM_VERT(v.vertex);
 
-				o.normal = normalize(mul((float3x3)_Object2World, v.normal));
+				o.normal = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
 
-				float3 skyPos = mul(TOD_World2Sky, mul(_Object2World, v.vertex)).xyz;
+				float3 skyPos = mul(TOD_World2Sky, mul(unity_ObjectToWorld, v.vertex)).xyz;
 
 				o.tex.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
 				o.tex.z  = skyPos.y * 25;

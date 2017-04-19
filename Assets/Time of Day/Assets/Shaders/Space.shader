@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "Time of Day/Space"
 {
 	Properties
@@ -40,7 +42,7 @@ Shader "Time of Day/Space"
 
 				o.position = TOD_TRANSFORM_VERT(v.vertex);
 
-				float3 worldNormal = normalize(mul((float3x3)_Object2World, v.normal));
+				float3 worldNormal = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
 
 				float height   = abs(v.normal.y);
 				float heightWS = max(0, worldNormal.y);

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "Hidden/ProGrids/pg_GridShader"
 {
 	Properties
@@ -47,8 +49,8 @@ Shader "Hidden/ProGrids/pg_GridShader"
 				v2f o;
 
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.world = mul(_Object2World, v.vertex);
-				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
+				o.world = mul(unity_ObjectToWorld, v.vertex);
+				o.normal = mul(unity_ObjectToWorld, float4(v.normal, 0)).xyz;
 				o.color = v.color;
 
 				return o;
