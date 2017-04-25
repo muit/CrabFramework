@@ -5,8 +5,11 @@ public class Cache : MonoBehaviour {
     [Header("Character Prefabs")]
     public PlayerController player;
 
-    [Header("Object Prefabs")]
+    //[Header("Object Prefabs")]
 
+
+    [Header("References")]
+    public new Camera camera;
 
     //Singletone
     private static Cache instance;

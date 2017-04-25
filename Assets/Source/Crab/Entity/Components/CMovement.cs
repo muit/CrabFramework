@@ -34,10 +34,10 @@ namespace Crab.Entities
         private CharacterController characterController;
 
         void Awake() {
-            me = GetComponent<Entity>();
-            floor = GetComponentInChildren<EntityFloor>();
+            //Setup references
+            me       = GetComponent<Entity>();
+            floor    = GetComponentInChildren<EntityFloor>();
             animator = GetComponentInChildren<Animator>();
-
             characterController = GetComponent<CharacterController>();
 
             agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -66,7 +66,7 @@ namespace Crab.Entities
                 return;
             agentTarget = null;
             agent.SetDestination(position);
-            agent.Resume();
+            agent.isStopped = false;
         }
 
         public void AIMove(Transform trans, float reachDistance = 1) {
@@ -76,13 +76,13 @@ namespace Crab.Entities
             agentTarget = trans;
             targetCController = agentTarget.GetComponent<CharacterController>();
             agent.SetDestination(trans.position);
-            agent.Resume();
+            agent.isStopped = false;
         }
 
         public void CancelMovement() {
             if (agent)
             {
-                agent.Stop();
+                agent.isStopped = true;
                 agentTarget = null;
             }
         }
@@ -106,7 +106,7 @@ namespace Crab.Entities
                     }
                     if (distance >= reachDistance)
                     {
-                        agent.Resume();
+                        agent.isStopped = false;
                     }
                 }
             }
