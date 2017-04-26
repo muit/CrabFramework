@@ -46,7 +46,8 @@ public class AYSPlayerController : PlayerController {
     {
         ///////////////////////////////////////////////////////////////////////
         // MOVING
-        bool leftClick = Input.GetMouseButtonDown(0);
+        bool leftClick = Input.GetMouseButton(0);
+
         if (leftClick)
         {
             // Get camera from cache and create a ray from mouse's position
@@ -55,14 +56,15 @@ public class AYSPlayerController : PlayerController {
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 300, clickRayCollidesWith))
             {
+                //If we hit
                 Entity focusedEntity = hit.collider.GetComponent<Entity>();
-                Debug.Log(hit.transform.name);
-                Debug.DrawLine(ray.origin, hit.point, Color.blue, 2);
                 if (focusedEntity && focusedEntity.IsEnemyOf(me))
                 {
-                    HandleFiring(focusedEntity.transform.position - me.transform.position);
+                    Vector3 fireDirection = focusedEntity.transform.position - me.transform.position;
+                    HandleFiring(fireDirection, focusedEntity);
                 }
                 else {
+                    //Move to point in the navigation mesh
                     me.Movement.AIMove(hit.point);
                 }
             }
@@ -73,14 +75,14 @@ public class AYSPlayerController : PlayerController {
 
     ///////////////////////////////////////////////////////////////////////////
     // FIRING
-    private void HandleFiring(Vector3 direction) {
+    private void HandleFiring(Vector3 direction, Entity target = null) {
         //If we pressed fire and delay is over
         if (fireDelay.Over() || !fireDelay.IsStarted())
         {
             if (usedProjectile == ProjectileType.Bullet)
                 FireBullet(direction);
             else
-                FireMissile(null);
+                FireMissile(target.transform);
 
             // Restart delay
             fireDelay.Start();
@@ -93,7 +95,7 @@ public class AYSPlayerController : PlayerController {
         Transform fireTransform = bulletFireLocation != null ? bulletFireLocation : transform;
 
         //Fire bullet
-        Quaternion directionRot =Quaternion.FromToRotation(me.transform.forward, direction);
+        Quaternion directionRot =Quaternion.LookRotation(direction);
         bullets.Create(bulletPrefab, fireTransform.position, directionRot, me);
     }
 

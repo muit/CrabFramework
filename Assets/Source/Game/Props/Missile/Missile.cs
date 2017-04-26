@@ -24,7 +24,7 @@ public class Missile : Bullet {
 
     public float initialSpeed = 1;
     public float forwardForce = 100;
-    public float directionForce = 0.1f;
+    public float angularAmount = 50f;
     public AnimationCurve directionCofByLife;
 
     new ConstantForce constantForce;
@@ -41,9 +41,6 @@ public class Missile : Bullet {
     {
         base.OnStart();
 
-        //Reset target
-        target = null;
-
         rigidbody.velocity = transform.forward * initialSpeed;
         startTime = Time.time;
         constantForce.relativeForce = new Vector3(0, 0, forwardForce);
@@ -53,16 +50,18 @@ public class Missile : Bullet {
     {
         base.Update();
 
+        Debug.Log(target);
         if (!target)
             return;
         
         Vector3 BA = target.position - transform.position;
-        //Vector3 perfectTorque = BA.normalized - transform.forward;
 
+        Quaternion LookRotation = Quaternion.LookRotation(BA);
+        
         //Get multiplier by lifetime
         float Cof = directionCofByLife.Evaluate(Time.time - startTime);
-        Quaternion LookRotation = Quaternion.LookRotation(BA, Vector3.up);
-        
-        rigidbody.rotation = Quaternion.LerpUnclamped(transform.rotation, LookRotation, Cof * directionForce);
+        Debug.DrawLine(transform.position, transform.position + LookRotation * Vector3.forward, Color.blue);
+
+        rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, LookRotation, Time.deltaTime * angularAmount * Cof);
     }
 }
