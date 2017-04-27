@@ -42,6 +42,10 @@ namespace Crab
             events.CancelEvent((int)Events.BASIC_ATTACK);
         }
 
+        void JustDied(Entity killer) {
+            StopCombat();
+        }
+
         void EnemyLost(Entity enemy)
         {
             movement.AIMove(enemy.transform.position);
@@ -75,6 +79,9 @@ namespace Crab
         //Public Methods
         private HashSet<Entity> targets = new HashSet<Entity>();
         public void StartCombatWith(Entity entity) {
+            if (!me.IsAlive())
+                return;
+
             if (!me.IsEnemyOf(entity) || IsInCombat())
                 return;
 
@@ -90,7 +97,13 @@ namespace Crab
                 SendMessage("FinishCombat", entity);
             }
         }
-        
+
+        public void StopCombat()
+        {
+            targets.Clear();
+            SendMessage("FinishCombat", (Entity)null);
+        }
+
         public bool IsInCombat() {
             return targets.Count > 0;
         }

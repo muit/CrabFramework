@@ -82,6 +82,10 @@ public class AYSPlayerController : PlayerController {
         //If we pressed fire and delay is over
         if (fireDelay.Over() || !fireDelay.IsStarted())
         {
+            if (target && target.Attributes.Live < 10) {
+                usedProjectile = ProjectileType.Missile;
+            }
+
             if (usedProjectile == ProjectileType.Bullet)
                 FireBullet(direction);
             else

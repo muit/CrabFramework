@@ -19,6 +19,8 @@ public class Bullet : MonoBehaviour {
     public float initialForce = 300;
     public float lifeTime = 5f;
 
+    public ParticleSystem destroyParticlePrefab;
+
     public UnityEvent onHit;
 
     protected new Rigidbody rigidbody;
@@ -56,9 +58,12 @@ public class Bullet : MonoBehaviour {
         //Is entity and is enemy of our owner?
         if (entity && entity != owner && entity.IsEnemyOf(owner))
         {
-            //Debug.Log(entity);
             //Apply damage and call events
             entity.Damage(damage, owner);
+
+            if (destroyParticlePrefab) {
+                ParticleSystem.Instantiate(destroyParticlePrefab, transform.position, transform.rotation);
+            }
             onHit.Invoke();
             Destroy(gameObject);
         }
