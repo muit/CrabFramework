@@ -44,6 +44,9 @@ public class AYSPlayerController : PlayerController {
 
     protected override void Update()
     {
+        if (!me.IsAlive())
+            return;
+
         ///////////////////////////////////////////////////////////////////////
         // MOVING
         bool leftClick = Input.GetMouseButton(0);

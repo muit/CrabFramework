@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour {
 
 	public void Play(int i){
-		Application.LoadLevel(i);
+        SceneManager.LoadScene(i);
 	}
 
 	public void Pause(bool value)

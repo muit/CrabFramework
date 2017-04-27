@@ -49,9 +49,9 @@ namespace Crab.Utils
             foreach (KeyValuePair<T, Delay> ev in doneEvents)
             {
                 ev.Value.Reset();
-                if(dad)
-                    dad.SendMessage("OnEvent", ev.Key);
                 CancelEvent(ev.Key);
+                if (dad)
+                    dad.SendMessage("OnEvent", ev.Key);
             }
         }
     }

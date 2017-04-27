@@ -14,7 +14,9 @@ namespace Crab
             BASIC_ATTACK = 20122
         }
 
-
+        public int damage = 5;
+        public float attackDistance = 2.0f;
+        
         private CMovement movement;
 
         void Update() {
@@ -30,7 +32,7 @@ namespace Crab
         {
             movement.AIMove(enemy.transform);
 
-            events.RegistryEvent((int)Events.BASIC_ATTACK, Random.Range(3000, 6000));
+            events.RegistryEvent((int)Events.BASIC_ATTACK, Random.Range(1000, 2000));
         }
 
         void FinishCombat(Entity enemy)
@@ -53,7 +55,18 @@ namespace Crab
             switch ((Events)id)
             {
                 case Events.BASIC_ATTACK:
-                    events.RestartEvent((int)Events.BASIC_ATTACK, Random.Range(3000, 6000));
+                    //Search a close target
+                    foreach(Entity target in targets) {
+                        if (me.DistanceTo(target) < attackDistance)
+                        {
+                            target.Damage(damage, me);
+
+                            //Only attack to 1 target
+                            break;
+                        }
+                    }
+
+                    events.RestartEvent((int)Events.BASIC_ATTACK, Random.Range(1000, 1500));
                     break;
             }
         }

@@ -49,10 +49,14 @@ public class Bullet : MonoBehaviour {
     }
 
     void OnTriggerEnter(Collider col) {
-        Entity entity = col.GetComponent<Entity>();
+        if (col.isTrigger)
+            return;
 
+        Entity entity = col.GetComponent<Entity>();
         //Is entity and is enemy of our owner?
-        if (entity && entity.IsEnemyOf(owner)) {
+        if (entity && entity != owner && entity.IsEnemyOf(owner))
+        {
+            //Debug.Log(entity);
             //Apply damage and call events
             entity.Damage(damage, owner);
             onHit.Invoke();

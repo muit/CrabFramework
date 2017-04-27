@@ -24,9 +24,12 @@ namespace Crab {
 
         //Public Methods
         public void Damage(int damage, Entity damageCauser, DamageType damageType = DamageType.DEFAULT) {
+            if (!IsAlive())
+                return;
+
             Attributes.Live -= damage;
 
-            if (!Attributes.IsAlive())
+            if (!IsAlive())
             {
                 controller.SendMessage("JustDead", damageCauser);
                 damageCauser.controller.SendMessage("JustKilled", this);
@@ -100,6 +103,15 @@ namespace Crab {
             if (Attributes.faction == FactionDatabase.NO_FACTION && 
                 entity.Attributes.faction == FactionDatabase.NO_FACTION) return true;
             return false;
+        }
+
+        public bool IsAlive() {
+            return Attributes? Attributes.IsAlive() : false;
+        }
+
+
+        public float DistanceTo(Entity other) {
+            return other? Vector3.Distance(transform.position, other.transform.position) : 65536.0f;
         }
     }
 }

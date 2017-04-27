@@ -49,8 +49,7 @@ public class Missile : Bullet {
     protected override void Update()
     {
         base.Update();
-
-        Debug.Log(target);
+        
         if (!target)
             return;
         
