@@ -17,7 +17,7 @@ namespace Crab {
             {
                 m_controller = FactionDatabase.AddController(this, Attributes.faction);
             }
-            if (!m_controller) {
+            if (!controller) {
                 m_controller = gameObject.AddComponent<EntityController>();
             }
         }
@@ -28,12 +28,13 @@ namespace Crab {
 
             if (!Attributes.IsAlive())
             {
-                m_controller.SendMessage("JustDead", damageCauser);
+                controller.SendMessage("JustDead", damageCauser);
                 damageCauser.controller.SendMessage("JustKilled", this);
             }
             else
             {
-                //controller.AnyDamage(damage, damageCauser, damageType);
+                if(controller)
+                    controller.AnyDamage(damage, damageCauser, damageType);
 
                 if (IsAI() && !ai.IsInCombatWith(damageCauser))
                 {

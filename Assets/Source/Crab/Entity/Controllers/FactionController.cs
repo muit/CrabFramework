@@ -8,6 +8,6 @@ namespace Crab.Entities
         void EnterCombat(Entity target) { }
         void JustDead(Entity killer) { }
         void JustKilled(Entity victim) { }
-        protected override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) { }
+        public override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) { }
     }
 }

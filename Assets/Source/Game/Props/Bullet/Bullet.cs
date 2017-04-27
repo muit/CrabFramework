@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Crab;
 using Crab.Utils;
 
@@ -14,8 +15,11 @@ public class Bullet : MonoBehaviour {
     [System.NonSerialized]
     public Entity owner;
 
+    public int damage = 5;
     public float initialForce = 300;
     public float lifeTime = 5f;
+
+    public UnityEvent onHit;
 
     protected new Rigidbody rigidbody;
     protected Delay destroyDelay;
@@ -42,5 +46,17 @@ public class Bullet : MonoBehaviour {
     public virtual void OnStart()
     {
         rigidbody.AddForce(transform.forward * initialForce);
+    }
+
+    void OnTriggerEnter(Collider col) {
+        Entity entity = col.GetComponent<Entity>();
+
+        //Is entity and is enemy of our owner?
+        if (entity && entity.IsEnemyOf(owner)) {
+            //Apply damage and call events
+            entity.Damage(damage, owner);
+            onHit.Invoke();
+            Destroy(gameObject);
+        }
     }
 }

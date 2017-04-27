@@ -45,7 +45,7 @@ namespace Crab
             movement.AIMove(enemy.transform.position);
         }
         
-        protected override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) {
+        public override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) {
         }
 
         void OnEvent(int id)
