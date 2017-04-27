@@ -16,42 +16,55 @@ namespace Crab
 
         public int damage = 5;
         public float attackDistance = 2.0f;
-        
-        private CMovement movement;
+        public int speedLosePctOnDamage = 10;
 
-        void Update() {
-            events.Update();
+        [Header("Despawn")]
+        public bool despawnAfterDead = true;
+        public float despawnDelay = 2.0f;
+
+        private CMovement Movement {
+            get { return Me.Movement; }
         }
 
-        void JustSpawned()
+        protected override void Update()
         {
-            movement = GetComponent<CMovement>();
+            base.Update();
         }
 
-        void EnterCombat(Entity enemy)
+        protected override void JustSpawned()
         {
-            movement.AIMove(enemy.transform);
+        }
+
+        protected override void EnterCombat(Entity target)
+        {
+            Movement.AIMove(target.transform);
 
             events.RegistryEvent((int)Events.BASIC_ATTACK, Random.Range(1000, 2000));
         }
 
-        void FinishCombat(Entity enemy)
+        protected override void FinishCombat(Entity enemy)
         {
-            movement.CancelMovement();
+            Movement.CancelMovement();
 
             events.CancelEvent((int)Events.BASIC_ATTACK);
         }
-
-        void JustDied(Entity killer) {
+        
+        protected override void JustDied(Entity killer) {
             StopCombat();
+
+            Destroy(gameObject, despawnDelay);
         }
+
 
         void EnemyLost(Entity enemy)
         {
-            movement.AIMove(enemy.transform.position);
+            Movement.AIMove(enemy.transform.position);
         }
         
         public override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) {
+            base.AnyDamage(damage, damageCauser, damageType);
+
+            Movement.ReduceSpeedByPct(speedLosePctOnDamage);
         }
 
         void OnEvent(int id)
@@ -79,10 +92,10 @@ namespace Crab
         //Public Methods
         private HashSet<Entity> targets = new HashSet<Entity>();
         public void StartCombatWith(Entity entity) {
-            if (!me.IsAlive())
+            if (!Me.IsAlive())
                 return;
 
-            if (!me.IsEnemyOf(entity) || IsInCombat())
+            if (!Me.IsEnemyOf(entity) || IsInCombat())
                 return;
 
             targets.Add(entity);
@@ -94,14 +107,14 @@ namespace Crab
             targets.Remove(entity);
             if (targets.Count == 0)
             {
-                SendMessage("FinishCombat", entity);
+                FinishCombat(entity);
             }
         }
 
         public void StopCombat()
         {
             targets.Clear();
-            SendMessage("FinishCombat", (Entity)null);
+            FinishCombat(null);
         }
 
         public bool IsInCombat() {

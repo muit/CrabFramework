@@ -57,9 +57,13 @@ namespace Crab.Entities
 
             foreach (Entity visibleEntity in visibleTargets)
             {
-                float sqrDistance = Vector3.SqrMagnitude(transform.position - visibleEntity.transform.position);
-                if (sqrDistance > lostDistance * lostDistance) {
-                    lostEntities.Add(visibleEntity);
+                if (visibleEntity)
+                {
+                    float sqrDistance = Vector3.SqrMagnitude(transform.position - visibleEntity.transform.position);
+                    if (sqrDistance > lostDistance * lostDistance)
+                    {
+                        lostEntities.Add(visibleEntity);
+                    }
                 }
             }
 

@@ -31,7 +31,7 @@ namespace Crab {
 
             if (!IsAlive())
             {
-                controller.SendMessage("JustDead", damageCauser);
+                controller.SendMessage("JustDied", damageCauser);
                 damageCauser.controller.SendMessage("JustKilled", this);
             }
             else

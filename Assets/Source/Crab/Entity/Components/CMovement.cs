@@ -17,10 +17,10 @@ namespace Crab.Entities
         private Animator animator;
         private EntityFloor floor;
 
+
         //Camera
         [System.NonSerialized]
         public Vector3 viewDirection;
-        
         private Vector3 moveVector;
 
 
@@ -28,6 +28,7 @@ namespace Crab.Entities
         [Header("Pathfinding")]
         public float reachDistance = 1;
         public bool movementPrediction = false;
+
         private UnityEngine.AI.NavMeshAgent agent;
         private Transform agentTarget;
         private CharacterController targetCController;
@@ -40,6 +41,10 @@ namespace Crab.Entities
             animator = GetComponentInChildren<Animator>();
             characterController = GetComponent<CharacterController>();
 
+            UpdateAgent();
+        }
+
+        void UpdateAgent() {
             agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent)
             {
@@ -212,6 +217,17 @@ namespace Crab.Entities
             get {
                 return falling;
             }
+        }
+
+
+        /**
+         * Helpers
+         */
+        public void ReduceSpeedByPct(float pct) {
+            speed     *= 1 - pct / 100;
+            sideSpeed *= 1 - pct / 100;
+
+            UpdateAgent();
         }
     }
 }

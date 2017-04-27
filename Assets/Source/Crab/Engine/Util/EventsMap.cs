@@ -10,13 +10,19 @@ namespace Crab.Utils
     public class EventsMap<T>
         where T : IConvertible, IComparable, IFormattable
     {
-        protected MonoBehaviour dad;
+        protected MonoBehaviour father;
         protected Dictionary<T, Delay> events = new Dictionary<T, Delay>();
 
+        public MonoBehaviour Father {
+            set { father = value; }
+            get { return father;  }
+        }
+
+
         public EventsMap() { }
-        public EventsMap(MonoBehaviour dad) {
-            this.dad = dad;
-            if (!dad) throw new System.Exception("EventsMap dad can't be null or undefined.");
+        public EventsMap(MonoBehaviour father) {
+            this.father = father;
+            if (!father) throw new System.Exception("EventsMap dad can't be null or undefined.");
         }
 
         
@@ -50,8 +56,8 @@ namespace Crab.Utils
             {
                 ev.Value.Reset();
                 CancelEvent(ev.Key);
-                if (dad)
-                    dad.SendMessage("OnEvent", ev.Key);
+                if (father)
+                    father.SendMessage("OnEvent", ev.Key);
             }
         }
     }

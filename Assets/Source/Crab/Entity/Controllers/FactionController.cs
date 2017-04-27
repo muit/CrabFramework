@@ -5,9 +5,5 @@ namespace Crab.Entities
 
     public class FactionController : AIController
     {
-        void EnterCombat(Entity target) { }
-        void JustDead(Entity killer) { }
-        void JustKilled(Entity victim) { }
-        public override void AnyDamage(int damage, Entity damageCauser, DamageType damageType) { }
     }
 }

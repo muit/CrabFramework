@@ -10,7 +10,7 @@ public class AYSPlayerController : PlayerController {
     public LayerMask clickRayCollidesWith;
 
     [Header("Weapons")]
-    public ProjectileType usedProjectile = ProjectileType.Bullet;
+    public ProjectileType defaultProjectile = ProjectileType.Bullet;
 
     [Header("Bullets")]
     public Transform bulletFireLocation;
@@ -21,8 +21,8 @@ public class AYSPlayerController : PlayerController {
     public Missile missilePrefab;
 
     public int fireRatePerSecond = 4;
+    public int fireMissileLivePct = 25;
     public int bulletPoolSize = 40;
-
 
 
     BulletPool bullets;
@@ -82,17 +82,18 @@ public class AYSPlayerController : PlayerController {
         //If we pressed fire and delay is over
         if (fireDelay.Over() || !fireDelay.IsStarted())
         {
-            if (target && target.Attributes.Live < 10) {
-                usedProjectile = ProjectileType.Missile;
+            // Restart delay
+            fireDelay.Start();
+            
+            if (target && target.Attributes.LivePercentage <= fireMissileLivePct) {
+                FireMissile(target.transform);
+                return;
             }
 
-            if (usedProjectile == ProjectileType.Bullet)
+            if (defaultProjectile == ProjectileType.Bullet)
                 FireBullet(direction);
             else
                 FireMissile(target.transform);
-
-            // Restart delay
-            fireDelay.Start();
         }
     }
     

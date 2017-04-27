@@ -14,6 +14,7 @@ namespace Crab.Entities
         void Awake()
         {
             me = GetComponent<Entity>();
+            maxLive = live;
         }
 
         //Attributes
@@ -21,15 +22,24 @@ namespace Crab.Entities
         [SerializeField]
         private int live = 100;
         public string faction;
-
+        
+        private int maxLive = 100;
 
 
         public int Live {
-            set { live = value > 0 ? value : 0; }
+            set {
+                live = value > 0 ? value : 0;
+                if (live > maxLive)
+                    maxLive = live;
+            }
             get { return live; }
         }
 
         public bool IsAlive() { return live > 0; }
+
+        public float LivePercentage {
+            get { return live / maxLive*100; }
+        }
     }
 }
 
