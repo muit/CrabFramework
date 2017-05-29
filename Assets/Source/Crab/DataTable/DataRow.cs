@@ -238,6 +238,7 @@ public class DataRow
     }
 }
 
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(DataRow.Attribute))]
 public class AttributeDrawer : PropertyDrawer
 {
@@ -248,3 +249,4 @@ public class AttributeDrawer : PropertyDrawer
         EditorGUI.EndProperty();
     }
 }
+#endif

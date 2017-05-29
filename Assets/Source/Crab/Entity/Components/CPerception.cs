@@ -145,11 +145,11 @@ namespace Crab.Entities
             {
                 Gizmos.DrawLine(transform.position, entity.transform.position);
             }
-
+#if UNITY_EDITOR
             UnityEditor.Handles.color = new Color(0, 1f, 0, 0.75f);
             UnityEditor.Handles.DrawWireDisc(transform.position, Vector2.up, viewDistance);
             UnityEditor.Handles.DrawWireDisc(transform.position, Vector2.up, lostDistance);
-
+#endif
             Gizmos.color = gizmosColor;
         }
     }
