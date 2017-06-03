@@ -28,18 +28,19 @@ public class AYSPlayerController : PlayerController {
     public float dodgeSideMax = 1.5f;
     public float dodgeDuration = 1f;
     public float dodgeFidelity = 1f;
+    public float dodgeCooldown = 1f;
 
 
     BulletPool bullets;
     BulletPool missiles;
 
     Delay fireDelay;
+    Delay dodgeCooldownDelay;
 
     bool dodging = false;
     float dodgeCurrentDuration = 0;
     float dodgeSpeed= 0;
-    float sideCofBeforeDodge = 0.0f;
-    float forwardCofBeforeDodge = 0.0f;
+    Vector2 beforeDodgeDir;
 
 
     protected override void Awake() {
@@ -52,6 +53,7 @@ public class AYSPlayerController : PlayerController {
         missiles = new BulletPool(bulletPoolSize);
 
         fireDelay = new Delay(1000 / fireRatePerSecond);
+        dodgeCooldownDelay = new Delay(0, false);
     }
 
     protected override void Update()
@@ -74,31 +76,36 @@ public class AYSPlayerController : PlayerController {
             float dodgeDelta = dodgeCurrentDuration / dodgeDuration;
             bool dodgeIsStarting = dodgeDelta < 0.5f;
 
+            Vector2 beforeDodgeDirNm = beforeDodgeDir.normalized;
 
-            float dodgeSideCof    = Mathf.Clamp(Mathf.Lerp(0, dodgeSide,    1-Mathf.Abs(dodgeDelta * 2 - 1)), 0, dodgeSideMax);
-            float dodgeForwardCof = Mathf.Clamp(Mathf.Lerp(0, dodgeForward, 1-Mathf.Abs(dodgeDelta * 2 - 1)), 0, dodgeForwardMax);
+            float dodgeSideCof    = CalculateDodgeSpeed(dodgeSide,    dodgeSideMax,    dodgeDelta, beforeDodgeDir.x, beforeDodgeDirNm.x);
+            float dodgeForwardCof = CalculateDodgeSpeed(dodgeForward, dodgeForwardMax, dodgeDelta, beforeDodgeDir.y, beforeDodgeDirNm.y);
 
             me.Movement.Move(
-                sideCofBeforeDodge > 0 ?    Mathf.Max(dodgeSideCof, sideCofBeforeDodge * dodgeFidelity)       : Mathf.Min(-dodgeSideCof, sideCofBeforeDodge * dodgeFidelity),
-                forwardCofBeforeDodge > 0 ? Mathf.Max(dodgeForwardCof, forwardCofBeforeDodge * dodgeFidelity) : Mathf.Min(-dodgeForwardCof, forwardCofBeforeDodge * dodgeFidelity)
+                dodgeSideCof,
+                dodgeForwardCof
             );
 
 
             if (dodgeDelta >= 1)
             {
                 dodging = false;
+                dodgeCooldownDelay.Start(dodgeCooldown);
             }
         }
         else
         {
-            if ((forwardCof != 0 || sideCof != 0) && Input.GetKeyDown(KeyCode.Space))
+            if (dodgeCooldownDelay.Over() || !dodgeCooldownDelay.IsStarted())
             {
-                dodging = true;
-                dodgeSpeed = 0f;
-                dodgeCurrentDuration = 0f;
+                if ((forwardCof != 0 || sideCof != 0)
+                  && Input.GetKey(KeyCode.Space))
+                {
+                    dodging = true;
+                    dodgeSpeed = 0f;
+                    dodgeCurrentDuration = 0f;
 
-                sideCofBeforeDodge    = sideCof;
-                forwardCofBeforeDodge = forwardCof;
+                    beforeDodgeDir = new Vector2(sideCof, forwardCof);
+                }
             }
 
             me.Movement.Move(sideCof, forwardCof);
@@ -112,6 +119,24 @@ public class AYSPlayerController : PlayerController {
 
         if (leftClick)  HandleFiring(fireDirection);
         if (rightClick) HandleFiring(fireDirection, ProjectileType.Missile);
+    }
+
+
+    private float CalculateDodgeSpeed(float dodgeSpeed, float dodgeSpeedMax, float dodgeDelta, float lastInput, float lastInputNormalized)
+    {
+        if (!dodging)
+            return 0.0f;
+
+        if (lastInput == 0)
+            return 0.0f;
+
+        float direction = lastInput > 0 ? 1 : -1; 
+
+        //Calculate pure dodge speed
+        float dodgeSpeedCof = Mathf.Clamp(Mathf.Lerp(0, dodgeSpeed, 1 - Mathf.Abs(dodgeDelta * 2 - 1)), 0, dodgeSpeedMax);
+
+        //Smooth transition into dodge
+        return Mathf.Max(dodgeSpeedCof, Mathf.Abs(lastInput) * dodgeFidelity) * lastInputNormalized;
     }
 
     ///////////////////////////////////////////////////////////////////////////

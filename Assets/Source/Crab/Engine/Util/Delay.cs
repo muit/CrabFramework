@@ -38,6 +38,12 @@ namespace Crab.Utils
             endTime = length + Time.time * 1000;
         }
 
+        //Start the delay with x seconds
+        public void Start(float newLength)
+        {
+            Start((int)(newLength * 1000));
+        }
+
         public void Reset()
         {
             started = false;
