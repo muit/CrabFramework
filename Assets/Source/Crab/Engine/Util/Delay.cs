@@ -13,13 +13,20 @@ namespace Crab.Utils
         {
             this.length = length;
             if (start)
-            {
                 Start();
-            }
+
+            started = start;
+        }
+        public Delay(float seconds, bool start = true)
+        {
+            length = (int)(seconds*1000);
+            if (start)
+                Start();
+
             started = start;
         }
 
-        public bool Over()
+            public bool Over()
         {
             if (!started)
                 return false;

@@ -75,8 +75,8 @@ namespace Crab {
 
             //if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             //{
-                x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-                y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+                x += Input.GetAxis("Mouse X") * xSpeed * Time.deltaTime/*0.02f*/;
+                y -= Input.GetAxis("Mouse Y") * ySpeed * Time.deltaTime/*0.02f*/;
 
                 //Set Movement Direction
                 Vector3 direction = transform.forward;

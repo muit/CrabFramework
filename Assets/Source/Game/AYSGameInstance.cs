@@ -10,7 +10,7 @@ public class AYSGameInstance : GameInstance {
     public string bossScene  = "Game";
 
 
-    int currentLevel = 0;
+    public int currentLevel = 0;
     bool bossPhase = false;
 
 
