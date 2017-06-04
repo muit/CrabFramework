@@ -4,22 +4,29 @@ using UnityEngine;
 using Crab;
 using Crab.Utils;
 
-public class Spawner : MonoBehaviour
-{
-
-    public bool startActivated = false;
-
+[System.Serializable]
+public class SpawnPreset {
     [Tooltip("Entity that will be generated")]
     public Entity entityPrefab;
-    [Tooltip("(Optional) Where the new entity will be added")]
-    public GameObject containerObject;
     public int spawnsPerMinute = 21;
     public int spawnVariation = 3;
     [Tooltip("Maximum amount of spawns")]
     public int maxSpawns = 100;
+}
+
+public class Spawner : MonoBehaviour
+{
+
+    public bool startActivated = false;
+    
+    [Tooltip("(Optional) Where the new entity will be added")]
+    public GameObject containerObject;
 
     [Header("Entity")]
     public bool startCombatOnSpawn = true;
+
+    public SpawnPreset defaultPreset;
+    public List<SpawnPreset> levelPresets;
 
     private Delay spawnDelay;
 
@@ -34,30 +41,47 @@ public class Spawner : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        if (spawnDelay.Over()) {
+        if (!spawnDelay.Over())
+            return;
 
-            //Start the event again
-            spawnDelay.Start(GetSpawnLength());
+        //Start the event again
+        spawnDelay.Start(GetSpawnLength());
+        
+        SpawnPreset preset = GetPreset();
 
-            if (!entityPrefab)
-                return;
+        if (!preset.entityPrefab)
+            return;
 
-            Entity newEntity = Entity.Instantiate(entityPrefab, transform.position, transform.rotation);
+        Entity newEntity = Entity.Instantiate(preset.entityPrefab, transform.position, transform.rotation);
 
-            if (containerObject) {
-                newEntity.transform.parent = containerObject.transform;
-            }
+        if (containerObject) {
+            newEntity.transform.parent = containerObject.transform;
+        }
 
-            if (startCombatOnSpawn) {
-                //Start combat with player
-                newEntity.ai.StartCombatWith(Cache.Get.player.Me);
-            }
-
+        if (startCombatOnSpawn) {
+            //Start combat with player
+            newEntity.ai.StartCombatWith(Cache.Get.player.Me);
         }
 	}
 
     private int GetSpawnLength() {
-        float finalSpawnsPerMinute = Mathf.Clamp(Random.Range(spawnsPerMinute - spawnVariation, spawnsPerMinute + spawnVariation), 1, 100000);
+        SpawnPreset preset = GetPreset();
+
+        float finalSpawnsPerMinute = Mathf.Clamp(Random.Range(preset.spawnsPerMinute - preset.spawnVariation, preset.spawnsPerMinute + preset.spawnVariation), 1, 100000);
         return (int)(60/finalSpawnsPerMinute * 1000);
+    }
+
+    private SpawnPreset GetPreset()
+    {
+        SpawnPreset preset = null;
+
+        AYSGameInstance gi = Cache.Get.gameInstance;
+        if (gi != null && levelPresets.Count > gi.Level)
+            preset = levelPresets[gi.Level];
+        
+        if (preset == null)
+            return defaultPreset;
+
+        return preset;
     }
 }

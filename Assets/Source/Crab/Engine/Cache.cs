@@ -6,10 +6,19 @@ public class Cache : MonoBehaviour {
     public PlayerController player;
 
     //[Header("Object Prefabs")]
-
-
+    
     [Header("References")]
     public new Camera camera;
+
+    AYSGameInstance _gameInstance;
+
+
+    public AYSGameInstance gameInstance {
+        get {
+            return _gameInstance ? _gameInstance : _gameInstance = FindObjectOfType<AYSGameInstance>();
+        }
+    }
+
 
     //Singletone
     private static Cache instance;
