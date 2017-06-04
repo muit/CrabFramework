@@ -14,7 +14,7 @@ namespace Crab
             movement = me.Movement;
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
             movement.Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         }

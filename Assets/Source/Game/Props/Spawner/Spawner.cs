@@ -7,6 +7,8 @@ using Crab.Utils;
 public class Spawner : MonoBehaviour
 {
 
+    public bool startActivated = false;
+
     [Tooltip("Entity that will be generated")]
     public Entity entityPrefab;
     [Tooltip("(Optional) Where the new entity will be added")]
@@ -23,8 +25,12 @@ public class Spawner : MonoBehaviour
 
     // Use this for initialization
     void Start () {
-        spawnDelay = new Delay(GetSpawnLength(), true);
+        spawnDelay = new Delay(GetSpawnLength(), startActivated);
 	}
+
+    public void Activate() {
+        spawnDelay.Start(GetSpawnLength());
+    }
 	
 	// Update is called once per frame
 	void Update () {

@@ -1,58 +1,72 @@
 ﻿using UnityEngine;
-using Crab;
 using Crab.Events;
-using UnityEngine.SceneManagement;
 
-public class SceneScript : MonoBehaviour
+
+namespace Crab
 {
-    // Static singleton property
-    public static SceneScript Instance { get; private set; }
-
-    void Awake()
+    public class SceneScript : MonoBehaviour
     {
-        // Check if there are any other instances conflicting
-        if (Instance != null && Instance != this)
+        public string CustomGameInstance = "GameInstance";
+        
+        System.Type GameInstanceClass = typeof(GameInstance);
+
+        // Static singleton property
+        public static SceneScript Instance { get; private set; }
+
+        void Awake()
         {
-            Destroy(gameObject);
-        }
-        Instance = this;
+            if (CustomGameInstance.Length > 0 && CustomGameInstance != "GameInstance") {
+                System.Type NewClass = System.Type.GetType(CustomGameInstance);
+                if (NewClass != null)
+                    GameInstanceClass = NewClass;
+            }
 
-        //DontDestroyOnLoad(gameObject);
-    }
+            // Check if there are any other instances conflicting
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            Instance = this;
 
-    [System.NonSerialized]
-    public ESpawn spawn;
-    [System.NonSerialized]
-    public PlayerController player;
-    [System.NonSerialized]
-    new public CameraMovement camera;
-
-    void Start()
-    {
-        spawn = FindObjectOfType<ESpawn>();
-        BeforeGameStart();
-
-        if (!player)
-        {
-            player = FindObjectOfType<PlayerController>();
+            //DontDestroyOnLoad(gameObject);
         }
 
-        if (!camera)
+        [System.NonSerialized]
+        public ESpawn spawn;
+        [System.NonSerialized]
+        public PlayerController player;
+        [System.NonSerialized]
+        new public CameraMovement camera;
+
+        void Start()
         {
-            camera = FindObjectOfType<CameraMovement>();
-            if (camera) camera.SetTarget(player);
+            if (!FindObjectOfType<GameInstance>()) {
+                //Create game Instance if no one is found
+                GameObject gi = new GameObject("Game Instance", GameInstanceClass);
+            }
+
+            spawn = FindObjectOfType<ESpawn>();
+            BeforeGameStart();
+
+            if (!player)
+            {
+                player = FindObjectOfType<PlayerController>();
+            }
+
+            if (!camera)
+            {
+                camera = FindObjectOfType<CameraMovement>();
+                if (camera) camera.SetTarget(player);
+            }
+
+            OnGameStart(player);
         }
 
-        OnGameStart(player);
+
+        //Events
+        protected virtual void BeforeGameStart() { }
+        protected virtual void OnGameStart(PlayerController player) { }
+
+        protected virtual void Update() { }
     }
-
-    public void LoadScene(int scene)
-    {
-        SceneManager.LoadSceneAsync(scene);
-    }
-
-
-    //Events
-    protected virtual void BeforeGameStart() { }
-    protected virtual void OnGameStart(PlayerController player) {}
 }
