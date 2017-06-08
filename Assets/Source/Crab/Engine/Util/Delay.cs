@@ -26,12 +26,16 @@ namespace Crab.Utils
             started = start;
         }
 
-            public bool Over()
+        public bool Over()
         {
             if (!started)
                 return false;
 
             return Time.time * 1000 >= endTime;
+        }
+
+        public float TimeRemaining() {
+            return IsStarted() ? (float)endTime / 1000 - Time.time : 0;
         }
 
         public void Start(int newLength = -1)

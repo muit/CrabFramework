@@ -46,6 +46,18 @@ namespace Crab {
             }
         }
 
+        public void Die(Entity killer = null) {
+            if (!IsAlive())
+                return;
+
+            Attributes.Live = 0;
+
+            controller.SendMessage("JustDied", killer? killer : this);
+            if (killer) {
+                killer.controller.SendMessage("JustKilled", this);
+            }
+        }
+
         public bool IsPlayer() {
             return m_controller as PlayerController;
         }

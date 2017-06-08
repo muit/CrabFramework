@@ -12,10 +12,19 @@ public class Cache : MonoBehaviour {
 
     AYSGameInstance _gameInstance;
 
-
     public AYSGameInstance gameInstance {
         get {
             return _gameInstance ? _gameInstance : _gameInstance = FindObjectOfType<AYSGameInstance>();
+        }
+    }
+
+    LevelScene _levelScene;
+
+    public LevelScene levelScene
+    {
+        get
+        {
+            return _levelScene ? _levelScene : _levelScene = GetComponent<LevelScene>();
         }
     }
 

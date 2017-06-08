@@ -1,24 +1,39 @@
-﻿using System.Collections;
+﻿using System;
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 using Crab;
 using Crab.Utils;
+
+
+[Serializable]
+public class ProjectilePreset<T>
+    where T : Bullet
+{
+    public Transform fireLocation;
+    public T prefab;
+    public int fireRate = 4;
+}
+
+[Serializable]
+public class BulletPreset : ProjectilePreset<Bullet> { }
+
+[Serializable]
+public class MissilePreset : ProjectilePreset<Bullet> { }
+
 
 public class AYSPlayerController : PlayerController {
 
     [Header("Movement")]
     public LayerMask clickRayCollidesWith;
 
-    [Header("Bullets")]
-    public Transform bulletFireLocation;
-    public Bullet bulletPrefab;
+    [Header("Projectiles")]
+    public BulletPreset  bulletPreset;
+    public MissilePreset missilePreset;
 
-    [Header("Missiles")]
-    public Transform missileFireLocation;
-    public Missile missilePrefab;
-
-    public int fireRatePerSecond = 4;
-    public int fireMissileLivePct = 25;
+    //public int fireMissileLivePct = 25;
     public int bulletPoolSize = 40;
 
     [Header("Dodge")]
@@ -52,14 +67,17 @@ public class AYSPlayerController : PlayerController {
         bullets = new BulletPool(bulletPoolSize);
         missiles = new BulletPool(bulletPoolSize);
 
-        fireDelay = new Delay(1000 / fireRatePerSecond);
+        fireDelay = new Delay(500);
         dodgeCooldownDelay = new Delay(0, false);
     }
 
     protected override void Update()
     {
         if (!me.IsAlive())
+        {
+            me.Movement.Move(0,0);
             return;
+        }
 
         ///////////////////////////////////////////////////////////////////////
         // MOVING
@@ -145,15 +163,6 @@ public class AYSPlayerController : PlayerController {
         //If we pressed fire and delay is over
         if (fireDelay.Over() || !fireDelay.IsStarted())
         {
-            // Restart delay
-            fireDelay.Start();
-            
-            if (target && target.Attributes.LivePercentage <= fireMissileLivePct)
-            {
-                FireMissile(target.transform);
-                return;
-            }
-
             if (projectile == ProjectileType.Bullet)
                 FireBullet(direction);
             else
@@ -164,31 +173,40 @@ public class AYSPlayerController : PlayerController {
     public void FireBullet(Vector3 direction)
     {
         //Use our own transform if theres no fire location
-        Transform fireTransform = bulletFireLocation != null ? bulletFireLocation : transform;
+        Transform fireTransform = bulletPreset.fireLocation != null ? bulletPreset.fireLocation : transform;
 
         //Fire bullet
         Quaternion directionRot =Quaternion.LookRotation(direction);
-        bullets.Create(bulletPrefab, fireTransform.position, directionRot, me);
+        bullets.Create(bulletPreset.prefab, fireTransform.position, directionRot, me);
+
+        // Restart delay
+        fireDelay.Start(1000 / bulletPreset.fireRate);
     }
 
     public void FireMissile(Transform target)
     {
         //Use our own transform if theres no fire location
-        Transform fireTransform = missileFireLocation != null ? missileFireLocation : transform;
+        Transform fireTransform = missilePreset.fireLocation != null ? missilePreset.fireLocation : transform;
 
         //Fire missile
-        Missile missile = (Missile)missiles.Create(missilePrefab, fireTransform.position, fireTransform.rotation, me);
+        Missile missile = (Missile)missiles.Create(missilePreset.prefab, fireTransform.position, fireTransform.rotation, me);
         //Set target to follow
         missile.Target = target;
+
+        // Restart delay
+        fireDelay.Start(1000 / missilePreset.fireRate);
     }
 
     public void FireMissile(Vector3 direction)
     {
         //Use our own transform if theres no fire location
-        Transform fireTransform = missileFireLocation != null ? missileFireLocation : transform;
+        Transform fireTransform = missilePreset.fireLocation != null ? missilePreset.fireLocation : transform;
 
         //Fire missile
         Quaternion directionRot = Quaternion.LookRotation(direction);
-        Missile missile = (Missile)missiles.Create(missilePrefab, fireTransform.position, directionRot, me);
+        Missile missile = (Missile)missiles.Create(missilePreset.prefab, fireTransform.position, directionRot, me);
+
+        // Restart delay
+        fireDelay.Start(1000 / missilePreset.fireRate);
     }
 }

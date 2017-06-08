@@ -19,7 +19,9 @@ public class Bullet : MonoBehaviour {
     public float initialForce = 300;
     public float lifeTime = 5f;
 
+
     public ParticleSystem destroyParticlePrefab;
+    public float particleRate = 1.0f;
 
     public UnityEvent onHit;
 
@@ -50,8 +52,8 @@ public class Bullet : MonoBehaviour {
         rigidbody.AddForce(transform.forward * initialForce);
     }
 
-    void OnTriggerEnter(Collider col) {
-        if (col.isTrigger)
+    public void OnHit(Collider col) {
+        if (col.isTrigger || col.transform.parent == this)
             return;
 
         Entity entity = col.GetComponent<Entity>();
@@ -61,7 +63,7 @@ public class Bullet : MonoBehaviour {
             //Apply damage and call events
             entity.Damage(damage, owner);
 
-            if (destroyParticlePrefab) {
+            if (destroyParticlePrefab && Random.Range(0.0f, 1.0f) < particleRate) {
                 ParticleSystem.Instantiate(destroyParticlePrefab, transform.position, transform.rotation);
             }
             onHit.Invoke();

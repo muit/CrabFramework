@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +18,8 @@ public class LevelScene : SceneScript {
     public float transitionDuration = 2;
     public List<Spawner> spawners;
 
-    Delay finishTimer;
+    [NonSerialized]
+    public Delay finishTimer;
     Delay transitionTimer;
     AYSGameInstance GameInstance;
 

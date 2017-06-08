@@ -4,7 +4,6 @@ using Crab.Entities;
 
 namespace Crab
 {
-
     [RequireComponent(typeof(Entity))]
     [RequireComponent(typeof(CMovement))]
     [DisallowMultipleComponent]
@@ -14,7 +13,11 @@ namespace Crab
             BASIC_ATTACK = 20122
         }
 
-        public int damage = 5;
+        [Header("Mele")]
+        public bool doMele = true;
+        public int meleDamage = 5;
+        public float meleMinDelay = 1f;
+        public float meleMaxDelay = 1.5f;
         public float attackDistance = 2.0f;
         public int speedLosePctOnDamage = 10;
 
@@ -29,6 +32,13 @@ namespace Crab
         protected override void Update()
         {
             base.Update();
+
+            if (IsInCombat())
+                CombatUpdate();
+        }
+
+        protected virtual void CombatUpdate()
+        {
         }
 
         protected override void JustSpawned()
@@ -39,7 +49,7 @@ namespace Crab
         {
             Movement.AIMove(target.transform);
 
-            events.RegistryEvent((int)Events.BASIC_ATTACK, Random.Range(1000, 2000));
+            events.RegistryEvent((int)Events.BASIC_ATTACK, (int)Random.Range(meleMinDelay, meleMaxDelay) * 1000);
         }
 
         protected override void FinishCombat(Entity enemy)
@@ -67,30 +77,31 @@ namespace Crab
             Movement.ReduceSpeedByPct(speedLosePctOnDamage);
         }
 
-        void OnEvent(int id)
+        protected virtual void OnEvent(int id)
         {
             switch ((Events)id)
             {
                 case Events.BASIC_ATTACK:
                     //Search a close target
                     foreach(Entity target in targets) {
-                        if (me.DistanceTo(target) < attackDistance)
+                        if (doMele && me.DistanceTo(target) < attackDistance)
                         {
-                            target.Damage(damage, me);
+                            target.Damage(meleDamage, me);
 
                             //Only attack to 1 target
                             break;
                         }
                     }
 
-                    events.RestartEvent((int)Events.BASIC_ATTACK, Random.Range(1000, 1500));
+                    events.RestartEvent((int)Events.BASIC_ATTACK, (int)Random.Range(meleMinDelay, meleMaxDelay) * 1000);
                     break;
             }
         }
 
 
         //Public Methods
-        private HashSet<Entity> targets = new HashSet<Entity>();
+        protected List<Entity> targets = new List<Entity>();
+
         public void StartCombatWith(Entity entity) {
             if (!Me.IsAlive())
                 return;

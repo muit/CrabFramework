@@ -45,6 +45,15 @@ namespace Crab.Utils
             RegistryEvent(id, duration);
         }
 
+        public void RestartEvent<E>(E id, int duration)
+            where E : struct, IConvertible, IComparable, IFormattable
+        {
+            if (typeof(E).IsEnum)
+            {
+                RestartEvent(Convert.ToInt32(id), duration);
+            }
+        }
+
         public void CancelEvent(T id) {
             events.Remove(id);
         } 
@@ -59,6 +68,11 @@ namespace Crab.Utils
                 if (father)
                     father.SendMessage("OnEvent", ev.Key);
             }
+        }
+
+        public bool IsRunning(T id)
+        {
+            return events.ContainsKey(id) && events[id].IsStarted();
         }
     }
 }
