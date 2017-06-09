@@ -7,6 +7,7 @@ using Crab;
 using Crab.Utils;
 
 public enum LevelFinishReason {
+    None,
     TimePassed,
     AllEnemiesKilled,
     PlayerDied
@@ -14,7 +15,7 @@ public enum LevelFinishReason {
 
 public class LevelScene : SceneScript {
 
-    public float roundDuration = 25;
+    public float roundDuration = 35;
     public float transitionDuration = 2;
     public List<Spawner> spawners;
 
@@ -22,6 +23,8 @@ public class LevelScene : SceneScript {
     public Delay finishTimer;
     Delay transitionTimer;
     AYSGameInstance GameInstance;
+
+    LevelFinishReason finishReason = LevelFinishReason.None;
 
     protected override void OnGameStart(PlayerController Player)
     {
@@ -40,18 +43,28 @@ public class LevelScene : SceneScript {
         if (finishTimer.Over())
         {
             finishTimer.Reset();
-            transitionTimer.Start(transitionDuration);
+
             Time.timeScale = 0.2f;
+            FinishRound(LevelFinishReason.TimePassed);
         }
         if (transitionTimer.Over()) {
             transitionTimer.Reset();
-
-            if (Cache.Get.player.Me.IsAlive())
-            {
-                //Finished Successfully
-                GameInstance.FinishLevel(true, LevelFinishReason.TimePassed);
-                Time.timeScale = 1f;
-            }
+            
+            //Finished Successfully
+            GameInstance.FinishLevel(finishReason);
+            Time.timeScale = 1f;
         }
+    }
+
+
+    public void FinishRound(LevelFinishReason reason) {
+        transitionTimer.Start(transitionDuration);
+        finishReason = reason;
+    }
+
+    public void PlayerDied()
+    {
+        Debug.Log("Killed");
+        FinishRound(LevelFinishReason.PlayerDied);
     }
 }

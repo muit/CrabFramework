@@ -21,6 +21,12 @@ namespace Crab
                     GameInstanceClass = NewClass;
             }
 
+            if (!FindObjectOfType<GameInstance>())
+            {
+                //Create game Instance if no one is found
+                GameObject gi = new GameObject("Game Instance", GameInstanceClass);
+            }
+
             // Check if there are any other instances conflicting
             if (Instance != null && Instance != this)
             {
@@ -40,11 +46,6 @@ namespace Crab
 
         void Start()
         {
-            if (!FindObjectOfType<GameInstance>()) {
-                //Create game Instance if no one is found
-                GameObject gi = new GameObject("Game Instance", GameInstanceClass);
-            }
-
             spawn = FindObjectOfType<ESpawn>();
             BeforeGameStart();
 

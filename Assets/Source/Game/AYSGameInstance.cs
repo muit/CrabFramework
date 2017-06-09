@@ -21,8 +21,13 @@ public class AYSGameInstance : GameInstance {
         LoadScene(levelScene);
     }
 
-    public void FinishLevel(bool success, LevelFinishReason reason) {
-        if (success) {
+    public void FinishLevel(LevelFinishReason reason) {
+        if (reason == LevelFinishReason.TimePassed) {
+            if (IsInBossLevel()) {
+                Debug.LogWarning("Tried to finish a round from a boss level.");
+                return;
+            }
+
             ++currentLevel;
             
             if (currentLevel < maximumLevels) {
@@ -34,9 +39,15 @@ public class AYSGameInstance : GameInstance {
                 bossPhase = true;
                 LoadScene(bossScene);
             }
+
+            return;
         }
 
-        LoadScene(levelScene);
+        //Failed
+        if (reason == LevelFinishReason.PlayerDied)
+        {
+            ResetRun();
+        }
     }
 
 

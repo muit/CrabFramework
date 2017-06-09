@@ -209,4 +209,8 @@ public class AYSPlayerController : PlayerController {
         // Restart delay
         fireDelay.Start(1000 / missilePreset.fireRate);
     }
+
+    protected override void JustDied(Entity Killer) {
+        Cache.Get.levelScene.PlayerDied();
+    }
 }
